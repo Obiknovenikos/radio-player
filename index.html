@@ -1,0 +1,442 @@
+[03.07.2026 19:26] Burdik Human: <!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Мобильный веб-плеер онлайн-радио</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#1e1e1e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <link rel="manifest" href="manifest.json" />
+
+  <style>
+    :root {
+      --bg: #1e1e1e;
+      --text: #f0f0f0;
+      --accent: #4caf50;
+      --muted: #999;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      height: 100%;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: 100%;
+    }
+
+    .header {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .status {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .stations {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .station-btn {
+      background: #2a2a2a;
+      border: none;
+      color: var(--text);
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .station-btn.active {
+      background: #333;
+      border: 1px solid var(--accent);
+    }
+
+    .player {
+      background: #252525;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .track-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .track-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .track-sub {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .play-btn {
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .play-btn:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+
+    .volume {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .volume input {
+      width: 120px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">Мобильное радио</div>
+  <div class="status" id="status">Выберите станцию для начала</div>
+
+  <div class="stations" id="stations"></div>
+
+  <div class="player">
+    <div class="track-info">
+      <div class="track-title" id="trackTitle">—</div>
+      <div class="track-sub" id="trackSub">—</div>
+    </div>
+
+    <div class="controls">
+      <button class="play-btn" id="playBtn" disabled>▶</button>
+    </div>
+
+    <div class="volume">
+      <span>Громкость</span>
+      <input type="range" id="volume" min="0" max="1" step="0.01" value="0.8" />
+    </div>
+  </div>
+</div>
+
+<script>
+  const STATIONS = [
+    {
+      id: "ukrainian-funk",
+      name: "Ukrainian Funk",
+      url: "https://stream.example.com/ukrainian-funk.mp3",
+      defaultTrack: "Ukrainian Funk & Groove"
+    },
+    {
+      id: "ukrainian-groove",
+      name: "Ukrainian Groove",
+      url: "https://stream.example.com/ukrainian-groove.mp3",
+      defaultTrack: "Deep Ukrainian Groove"
+    },
+    {
+      id: "somafm-deep-space",
+      name: "SomaFM Deep Space One",
+      url: "https://stream.somafm.com/deepspace1-128.mp3",
+      defaultTrack: "Deep ambient electronic & space"
+    },
+    {
+      id: "somafm-groove-salad",
+      name: "SomaFM Groove Salad",
+      url: "https://stream.somafm.com/groovesalad-128.mp3",
+      defaultTrack: "Chill, ambient, downtempo grooves"
+    },
+    {
+      id: "anjunadeep-radio",
+      name: "Anjunadeep Radio",
+      url: "https://stream.example.
+[03.07.2026 19:26] Burdik Human: com/anjunadeep.mp3",
+      defaultTrack: "Deep House, Melodic Techno, Downtempo"
+    },
+    {
+      id: "deepnova-deep-house",
+      name: "DeepNova Deep House",
+      url: "https://stream.example.com/deepnova.mp3",
+      defaultTrack: "Deep House 24/7, ad-free"
+    },
+    {
+      id: "pure-fm-uk",
+      name: "Pure FM UK",
+      url: "https://stream.example.com/purefmuk.mp3",
+      defaultTrack: "House, Garage, Jungle, DnB & underground"
+    },
+    {
+      id: "vision-radio-uk",
+      name: "Vision Radio UK",
+      url: "https://stream.example.com/visionradio.mp3",
+      defaultTrack: "UK Garage, UK Funky, House, Club Classics"
+    },
+    {
+      id: "garage-tape-packs",
+      name: "Garage Tape Packs",
+      url: "https://stream.example.com/gtp.mp3",
+      defaultTrack: "UKG, Deep House, DnB, Breaks, Amapiano"
+    },
+    {
+      id: "future-garage-live",
+      name: "Future Garage Live",
+      url: "https://stream.example.com/futuregarage.mp3",
+      defaultTrack: "Future Garage, Chillstep, Ambient"
+    },
+    {
+      id: "liquid-funk-efir",
+      name: "Liquid Funk (эфир)",
+      url: "https://dfm.ru/online/liquid-funk/stream",
+      defaultTrack: "Liquid DnB, Light Drum & Bass"
+    },
+    {
+      id: "oldschool-jungle-ragga",
+      name: "Old School Jungle & Ragga",
+      url: "https://stream.example.com/ragga-jungle.mp3",
+      defaultTrack: "Jungle, Ragga, Old School DnB"
+    },
+    {
+      id: "acid-house-radio",
+      name: "Acid House Radio",
+      url: "https://stream.example.com/acidhouse.mp3",
+      defaultTrack: "Acid, Old School House, Rave"
+    },
+    {
+      id: "soul-and-house-radio",
+      name: "Soul & All School House",
+      url: "https://stream.example.com/soulhouse.mp3",
+      defaultTrack: "Soul, All School House, Classic Vibes"
+    },
+    {
+      id: "radio-swiss-jazz",
+      name: "Radio Swiss Jazz",
+      url: "https://stream.srgssr.ch/radioswissjazz/radioswissjazz.m4a",
+      defaultTrack: "Jazz, Soul, Swing, Blues, Bebop"
+    },
+    {
+      id: "fip-france",
+      name: "FIP France",
+      url: "https://icecast.radiofrance.fr/fip-hifi.aac?id=radiofrance",
+      defaultTrack: "Eclectic: pop, rock, classic, jazz, groove, electro, world"
+    }
+  ];
+
+  const stationsEl = document.getElementById("stations");
+  const statusEl = document.getElementById("status");
+  const playBtn = document.getElementById("playBtn");
+  const volumeEl = document.getElementById("volume");
+  const trackTitleEl = document.getElementById("trackTitle");
+  const trackSubEl = document.getElementById("trackSub");
+
+  let audio = null;
+  let mediaSession = null;
+  let currentStation = null;
+  let isPlaying = false;
+
+  if ("mediaSession" in navigator) {
+    mediaSession = navigator.mediaSession;
+  }
+
+  function initStations() {
+    stationsEl.innerHTML = "";
+    STATIONS.forEach((station) => {
+      const btn = document.createElement("button");
+      btn.className = "station-btn";
+      btn.textContent = station.name;
+      btn.addEventListener("click", () => {
+        const activeBtn = document.querySelector(".station-btn.active");
+        selectStation(station, btn);
+        if (activeBtn) activeBtn.classList.remove("active");
+      });
+      stationsEl.appendChild(btn);
+    });
+  }
+
+  function selectStation(station, btnElement) {
+    if (currentStation && currentStation.id === station.id) {
+      return;
+    }
+
+    document.querySelectorAll(".station-btn").forEach(b => b.classList.remove("active"));
+    if (btnElement) btnElement.classList.add("active");
+
+    if (audio) {
+      audio.pause();
+      audio.src = "";
+    }
+
+    currentStation = station;
+    isPlaying = false;
+    playBtn.disabled = false;
+    playBtn.textContent = "▶";
+
+    statusEl.textContent = "Выбрана станция: " + station.name;
+    trackTitleEl.textContent = station.defaultTrack || "Радио";
+    trackSubEl.textContent = station.name;
+
+    updateMediaSessionMetadata(station);
+
+    audio = new Audio(station.url);
+    audio.volume = volumeEl.value;
+
+    audio.addEventListener("play", () => {
+      isPlaying = true;
+      playBtn.textContent = "⏸";
+[03.07.2026 19:26] Burdik Human: statusEl.textContent = "Воспроизведение: " + station.name;
+      if (mediaSession) {
+        mediaSession.playbackState = "playing";
+      }
+    });
+
+    audio.addEventListener("pause", () => {
+      isPlaying = false;
+      playBtn.textContent = "▶";
+      statusEl.textContent = "Воспроизведение остановлено: " + station.name;
+      if (mediaSession) {
+        mediaSession.playbackState = "paused";
+      }
+    });
+
+    audio.addEventListener("error", (e) => {
+      isPlaying = false;
+      playBtn.textContent = "▶";
+      statusEl.textContent = "Ошибка воспроизведения потока";
+      if (mediaSession) {
+        mediaSession.playbackState = "none";
+      }
+      console.error("Audio error:", e);
+    });
+
+    audio.addEventListener("loadeddata", () => {
+      statusEl.textContent = "Поток готов: " + station.name;
+    });
+  }
+
+  playBtn.addEventListener("click", () => {
+    if (!currentStation) {
+      statusEl.textContent = "Выберите станцию";
+      return;
+    }
+    if (!audio) {
+      const activeBtn = document.querySelector(".station-btn.active");
+      selectStation(currentStation, activeBtn);
+    }
+
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play().catch(err => {
+        statusEl.textContent = "Не удалось начать воспроизведение";
+        console.error(err);
+      });
+    }
+  });
+
+  volumeEl.addEventListener("input", () => {
+    if (audio) {
+      audio.volume = volumeEl.value;
+    }
+  });
+
+  function updateMediaSessionMetadata(station) {
+    if (!mediaSession) return;
+
+    const metadata = new MediaMetadata({
+      title: station.defaultTrack || "Радио",
+      artist: station.name,
+      album: "Online Radio",
+      artwork: [
+        { src: "icon-192.png", sizes: "192x192", type: "image/png" },
+        { src: "icon-512.png", sizes: "512x512", type: "image/png" }
+      ]
+    });
+
+    mediaSession.metadata = metadata;
+  }
+
+  function setupMediaSessionHandlers() {
+    if (!mediaSession) return;
+
+    mediaSession.setActionHandler("play", () => {
+      if (!isPlaying && audio) {
+        audio.play().catch(err => {
+          console.error("MediaSession play error:", err);
+        });
+      }
+    });
+
+    mediaSession.setActionHandler("pause", () => {
+      if (isPlaying && audio) {
+        audio.pause();
+      }
+    });
+
+    mediaSession.setActionHandler("previoustrack", () => {
+      // Можно реализовать переключение на предыдущую станцию
+    });
+
+    mediaSession.setActionHandler("nexttrack", () => {
+      // Можно реализовать переключение на следующую станцию
+    });
+
+    mediaSession.setActionHandler("stop", () => {
+      if (audio) {
+        audio.pause();
+        audio.src = "";
+        isPlaying = false;
+        playBtn.textContent = "▶";
+        mediaSession.playbackState = "none";
+      }
+    });
+  }
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js").then(() => {
+      console.log("Service Worker зарегистрирован");
+    }).catch(err => {
+      console.error("Ошибка регистрации SW:", err);
+    });
+  }
+
+  initStations();
+  setupMediaSessionHandlers();
+</script>
+</body>
+</html>
