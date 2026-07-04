@@ -1,442 +1,3888 @@
-[03.07.2026 19:26] Burdik Human: <!DOCTYPE html>
-<html lang="ru">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Мобильный веб-плеер онлайн-радио</title>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-  <meta name="theme-color" content="#1e1e1e" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-  <link rel="manifest" href="manifest.json" />
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080808">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="RADIO by BURDICK">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>RADIO by BURDICK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #1e1e1e;
-      --text: #f0f0f0;
-      --accent: #4caf50;
-      --muted: #999;
+      color-scheme: light;
+      --bg: #f7f3ec;
+      --panel: #ffffff;
+      --ink: #181615;
+      --muted: #6e6760;
+      --line: #ded6ca;
+      --accent: #d84f35;
+      --accent-dark: #a83225;
+      --green: #287a59;
+      --blue: #2f6690;
+      --gold: #bf7d1d;
+      --shadow: 0 18px 50px rgba(58, 43, 30, .12);
+      --radius: 8px;
+      font-family: "Yatra One", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    html, body {
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
       margin: 0;
-      padding: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      height: 100%;
+      background:
+        linear-gradient(135deg, rgba(216, 79, 53, .08), transparent 35%),
+        linear-gradient(315deg, rgba(47, 102, 144, .08), transparent 42%),
+        var(--bg);
+      color: var(--ink);
     }
 
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      height: 100%;
+    button,
+    input {
+      font: inherit;
     }
 
-    .header {
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .status {
-      font-size: 14px;
-      color: var(--muted);
-    }
-
-    .stations {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .station-btn {
-      background: #2a2a2a;
-      border: none;
-      color: var(--text);
-      padding: 12px 14px;
-      text-align: left;
-      font-size: 14px;
-      border-radius: 8px;
+    button {
       cursor: pointer;
     }
 
-    .station-btn.active {
-      background: #333;
-      border: 1px solid var(--accent);
+    .app {
+      width: min(1280px, calc(100vw - 28px));
+      margin: 0 auto;
+      padding: 24px 0 28px;
     }
 
-    .player {
-      background: #252525;
-      border-radius: 12px;
-      padding: 16px;
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .brand {
       display: flex;
-      flex-direction: column;
+      align-items: center;
       gap: 12px;
+      min-width: 0;
     }
 
-    .track-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: var(--panel);
+      box-shadow: 5px 5px 0 var(--accent);
+      flex: 0 0 auto;
     }
 
-    .track-title {
-      font-size: 16px;
-      font-weight: 600;
+    .mark svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
-    .track-sub {
-      font-size: 13px;
+    h1 {
+      margin: 0;
+      font-size: clamp(1.7rem, 2.1vw, 2.45rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 5px 0 0;
       color: var(--muted);
+      line-height: 1.45;
+      max-width: 760px;
+    }
+
+    .source-note {
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .72);
+      color: var(--muted);
+      white-space: nowrap;
+      font-size: .92rem;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(40, 122, 89, .14);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 430px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .sidebar,
+    .player-shell {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .86);
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar {
+      overflow: hidden;
+    }
+
+    .filters {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, .9);
+    }
+
+    .search {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .search svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .search input {
+      width: 100%;
+      min-height: 42px;
+      padding: 0 12px 0 38px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfaf7;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .search input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(47, 102, 144, .16);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      transition: background .16s ease, border-color .16s ease, color .16s ease;
+    }
+
+    .chip.active {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .station-list {
+      display: grid;
+      max-height: calc(100vh - 214px);
+      overflow: auto;
+      padding: 10px;
+      gap: 8px;
+      scrollbar-color: #b9afa2 transparent;
+    }
+
+    .station-card {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 12px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      min-height: 78px;
+      padding: 12px;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      background: #fbfaf7;
+      color: inherit;
+      text-align: left;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .station-card:hover {
+      transform: translateY(-1px);
+      border-color: #cfc4b6;
+      background: #fff;
+    }
+
+    .station-card.active {
+      border-color: var(--ink);
+      background: #fff;
+      box-shadow: inset 4px 0 0 var(--accent);
+    }
+
+    .stripe {
+      width: 12px;
+      height: 54px;
+      border-radius: 999px;
+      background: var(--tone, var(--accent));
+    }
+
+    .station-main {
+      min-width: 0;
+    }
+
+    .station-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .station-title {
+      overflow: hidden;
+      font-weight: 760;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .station-genre {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.3;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      padding: 3px 7px;
+      border: 1px solid rgba(40, 122, 89, .26);
+      border-radius: 999px;
+      background: rgba(40, 122, 89, .1);
+      color: var(--green);
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .icon-button {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .icon-button:hover {
+      border-color: var(--ink);
+    }
+
+    .icon-button svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .favorite.active svg {
+      fill: var(--gold);
+      stroke: var(--gold);
+    }
+
+    .player-shell {
+      min-height: calc(100vh - 118px);
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      overflow: hidden;
+    }
+
+    .now {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      padding: 22px;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(216, 79, 53, .11), rgba(255, 255, 255, 0) 52%),
+        #fff;
+    }
+
+    .now-title {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 4.8rem);
+      line-height: .95;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .now-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, .72);
+      font-size: .9rem;
+    }
+
+    .meter {
+      width: min(26vw, 190px);
+      min-width: 120px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 2px solid var(--ink);
+      display: grid;
+      place-items: center;
+      background:
+        repeating-radial-gradient(circle, transparent 0 13px, rgba(24, 22, 21, .08) 14px 15px),
+        var(--panel);
+      box-shadow: 8px 8px 0 var(--accent);
+    }
+
+    .meter-inner {
+      width: 55%;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .playing .meter {
+      animation: slowspin 11s linear infinite;
+    }
+
+    .playing .meter-inner {
+      animation: counterspin 11s linear infinite;
+    }
+
+    @keyframes slowspin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes counterspin {
+      to { transform: rotate(-360deg); }
     }
 
     .controls {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      display: grid;
+      gap: 18px;
+      align-content: start;
+      padding: 22px;
     }
 
-    .play-btn {
+    .transport {
+      display: grid;
+      grid-template-columns: auto auto auto minmax(150px, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+
+    .transport .big {
+      width: 58px;
+      height: 58px;
+      border: 0;
       background: var(--accent);
-      border: none;
       color: #fff;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--ink);
     }
 
-    .play-btn:disabled {
-      background: #555;
-      cursor: not-allowed;
+    .transport .big:hover {
+      background: var(--accent-dark);
     }
 
     .volume {
-      display: flex;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 10px;
       align-items: center;
-      gap: 8px;
-      font-size: 13px;
+      min-width: 0;
       color: var(--muted);
     }
 
-    .volume input {
-      width: 120px;
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
     }
+
+    .status-line {
+      min-height: 26px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .status-line.error {
+      color: var(--accent-dark);
+      font-weight: 650;
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .info-block {
+      min-height: 118px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfaf7;
+    }
+
+    .info-label {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 750;
+      text-transform: uppercase;
+    }
+
+    .info-value {
+      line-height: 1.45;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .text-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 650;
+    }
+
+    .text-button:hover {
+      border-color: var(--ink);
+    }
+
+    .text-button svg {
+      width: 17px;
+      height: 17px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .custom {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px dashed #c9b9a8;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .66);
+    }
+
+    .custom-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+
+    .custom input {
+      min-height: 34px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      outline: none;
+    }
+
+    .custom input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(47, 102, 144, .16);
+    }
+
+    .empty {
+      padding: 24px 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .native-audio {
+      width: 100%;
+      max-width: 560px;
+    }
+
+    @media (max-width: 900px) {
+      .topbar,
+      .layout,
+      .now,
+      .details {
+        grid-template-columns: 1fr;
+      }
+
+      .source-note {
+        justify-self: start;
+      }
+
+      .station-list {
+        max-height: 42vh;
+      }
+
+      .player-shell {
+        min-height: auto;
+      }
+
+      .meter {
+        width: 150px;
+      }
+    }
+
+    @media (max-width: 580px) {
+      .app {
+        width: min(100vw - 18px, 1280px);
+        padding-top: 14px;
+      }
+
+      .transport,
+      .custom-row {
+        grid-template-columns: 1fr;
+      }
+
+      .transport {
+        justify-items: start;
+      }
+
+      .volume {
+        width: 100%;
+      }
+
+      .now,
+      .controls {
+        padding: 16px;
+      }
+
+      .station-card {
+        grid-template-columns: 9px minmax(0, 1fr) auto;
+        gap: 10px;
+      }
+
+      .stripe {
+        width: 9px;
+      }
+    }
+
+    /* Brand gradient remix: lime x hot pink, based on the provided button reference. */
+    :root {
+      color-scheme: dark;
+      --bg: #080808;
+      --panel: rgba(255, 255, 255, .055);
+      --panel-strong: rgba(255, 255, 255, .09);
+      --ink: #f7f7f3;
+      --muted: rgba(255, 255, 255, .58);
+      --line: rgba(255, 255, 255, .11);
+      --lime: #B8FF00;
+      --pink: #FF2D78;
+      --hot: #FF0A54;
+      --neon: #C8FF00;
+      --accent: var(--lime);
+      --accent-dark: var(--pink);
+      --green: var(--lime);
+      --blue: var(--pink);
+      --gold: #ffe66d;
+      --shadow: 0 24px 80px rgba(0, 0, 0, .42), 0 0 70px rgba(255, 45, 120, .08);
+      --radius: 8px;
+      font-family: "Yatra One", "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background:
+        linear-gradient(135deg, rgba(184, 255, 0, .18) 0%, rgba(184, 255, 0, 0) 34%),
+        linear-gradient(315deg, rgba(255, 45, 120, .2) 0%, rgba(255, 45, 120, 0) 38%),
+        linear-gradient(180deg, #080808 0%, #101010 54%, #050505 100%);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: .34;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.12'/%3E%3C/svg%3E");
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+    }
+
+    .mark {
+      border: 1px solid rgba(255, 255, 255, .1);
+      background: linear-gradient(135deg, var(--lime), var(--pink));
+      color: #080808;
+      box-shadow: 0 0 30px rgba(184, 255, 0, .24), 0 0 58px rgba(255, 45, 120, .16);
+    }
+
+    h1,
+    .now-title {
+      font-family: "Yatra One", "Arial Narrow", Impact, sans-serif;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--lime), var(--pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h1 {
+      letter-spacing: .05em;
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, .48);
+    }
+
+    .source-note {
+      border-color: rgba(184, 255, 0, .22);
+      background: rgba(255, 255, 255, .045);
+      color: rgba(255, 255, 255, .72);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 0 32px rgba(184, 255, 0, .08);
+    }
+
+    .live-dot {
+      background: var(--lime);
+      box-shadow: 0 0 0 5px rgba(184, 255, 0, .12), 0 0 24px rgba(184, 255, 0, .55);
+    }
+
+    .sidebar,
+    .player-shell {
+      border-color: rgba(255, 255, 255, .1);
+      background: rgba(255, 255, 255, .052);
+      backdrop-filter: blur(22px);
+    }
+
+    .filters,
+    .now {
+      border-color: rgba(255, 255, 255, .1);
+      background:
+        linear-gradient(135deg, rgba(184, 255, 0, .08), rgba(255, 45, 120, .08)),
+        rgba(8, 8, 8, .72);
+    }
+
+    .search input,
+    .custom input {
+      border-color: rgba(255, 255, 255, .1);
+      background: rgba(0, 0, 0, .32);
+      color: var(--ink);
+    }
+
+    .search input::placeholder,
+    .custom input::placeholder {
+      color: rgba(255, 255, 255, .34);
+    }
+
+    .search input:focus,
+    .custom input:focus {
+      border-color: rgba(184, 255, 0, .55);
+      box-shadow: 0 0 0 3px rgba(184, 255, 0, .14), 0 0 30px rgba(255, 45, 120, .08);
+    }
+
+    .chip {
+      min-height: 36px;
+      border-color: rgba(255, 255, 255, .1);
+      background: rgba(255, 255, 255, .035);
+      color: rgba(255, 255, 255, .72);
+      font-size: .77rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .chip:hover {
+      border-color: rgba(184, 255, 0, .45);
+      color: var(--lime);
+      transform: translateY(-1px);
+    }
+
+    .chip.active {
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--lime), var(--pink));
+      color: #080808;
+      box-shadow: 0 0 24px rgba(184, 255, 0, .18), 0 0 34px rgba(255, 45, 120, .14);
+    }
+
+    .station-list {
+      scrollbar-color: rgba(184, 255, 0, .45) transparent;
+    }
+
+    .station-card {
+      border-color: rgba(255, 255, 255, .075);
+      background: rgba(255, 255, 255, .035);
+      color: var(--ink);
+    }
+
+    .station-card:hover {
+      border-color: rgba(184, 255, 0, .32);
+      background: rgba(255, 255, 255, .065);
+      box-shadow: 0 0 34px rgba(184, 255, 0, .08), 0 0 50px rgba(255, 45, 120, .08);
+    }
+
+    .station-card.active {
+      border-color: rgba(255, 255, 255, .18);
+      background:
+        linear-gradient(135deg, rgba(184, 255, 0, .12), rgba(255, 45, 120, .13)),
+        rgba(255, 255, 255, .07);
+      box-shadow: inset 4px 0 0 var(--lime), 0 0 44px rgba(255, 45, 120, .12);
+    }
+
+    .stripe {
+      background: linear-gradient(180deg, var(--tone, var(--lime)), var(--pink));
+      box-shadow: 0 0 18px rgba(184, 255, 0, .18);
+    }
+
+    .station-genre,
+    .info-label,
+    .status-line,
+    .volume,
+    .meta-pill {
+      color: rgba(255, 255, 255, .58);
+    }
+
+    .badge {
+      border-color: rgba(184, 255, 0, .28);
+      background: rgba(184, 255, 0, .09);
+      color: var(--lime);
+    }
+
+    .meta-pill,
+    .info-block,
+    .custom {
+      border-color: rgba(255, 255, 255, .1);
+      background: rgba(255, 255, 255, .045);
+    }
+
+    .meter {
+      border-color: rgba(255, 255, 255, .16);
+      background:
+        repeating-radial-gradient(circle, transparent 0 13px, rgba(255, 255, 255, .08) 14px 15px),
+        linear-gradient(135deg, rgba(184, 255, 0, .1), rgba(255, 45, 120, .12)),
+        #090909;
+      box-shadow: 0 0 42px rgba(184, 255, 0, .18), 0 0 70px rgba(255, 45, 120, .16);
+    }
+
+    .meter-inner {
+      background: linear-gradient(135deg, var(--lime), var(--pink));
+      color: #080808;
+      letter-spacing: .08em;
+    }
+
+    .icon-button {
+      position: relative;
+      overflow: hidden;
+      border-color: rgba(255, 255, 255, .1);
+      background: rgba(255, 255, 255, .045);
+      color: #fff;
+      transition: transform .2s, border-color .2s, color .2s, box-shadow .2s, background .2s;
+    }
+
+    .icon-button:hover {
+      transform: translateY(-3px);
+      border-color: rgba(184, 255, 0, .48);
+      color: var(--lime);
+      box-shadow: 0 0 28px rgba(184, 255, 0, .16), 0 0 42px rgba(255, 45, 120, .1);
+    }
+
+    .transport .big {
+      border: 0;
+      background: linear-gradient(135deg, var(--lime), var(--pink), var(--lime));
+      background-size: 200% 200%;
+      color: #080808;
+      box-shadow: 0 0 34px rgba(184, 255, 0, .26), 0 0 58px rgba(255, 45, 120, .2);
+      animation: brandShift 3.2s ease infinite;
+    }
+
+    .transport .big:hover {
+      background: linear-gradient(135deg, var(--pink), var(--lime));
+      color: #080808;
+      transform: translateY(-3px) scale(1.04);
+    }
+
+    .favorite.active svg {
+      fill: var(--pink);
+      stroke: var(--pink);
+    }
+
+    .text-button {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      min-height: 44px;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      color: #fff;
+      font-size: .78rem;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      transition: transform .2s, color .2s, box-shadow .2s;
+    }
+
+    .text-button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: 4px;
+      padding: 1px;
+      background: linear-gradient(135deg, var(--lime), var(--pink));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
+    .text-button::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      border-radius: 4px;
+      background: linear-gradient(135deg, var(--lime), var(--pink));
+      opacity: 0;
+      transition: opacity .25s;
+    }
+
+    .text-button:hover,
+    .text-button.active {
+      color: #080808;
+      transform: translateY(-3px);
+      box-shadow: 0 0 32px rgba(184, 255, 0, .16), 0 0 48px rgba(255, 45, 120, .14);
+    }
+
+    .text-button:hover::after,
+    .text-button.active::after {
+      opacity: 1;
+    }
+
+    .text-button svg,
+    .text-button span {
+      position: relative;
+      z-index: 1;
+    }
+
+    input[type="range"] {
+      accent-color: var(--lime);
+    }
+
+    .status-line.error {
+      color: #ff7aa8;
+    }
+
+    .native-audio {
+      max-width: 640px;
+      filter: saturate(1.2);
+    }
+
+    @keyframes brandShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @media (max-width: 580px) {
+      .app {
+        width: min(100vw - 18px, 1280px);
+      }
+
+      .subtitle {
+        font-size: .92rem;
+      }
+
+      .station-list {
+        max-height: 50vh;
+      }
+
+      .transport {
+        grid-template-columns: repeat(3, auto);
+        justify-content: start;
+      }
+
+      .volume {
+        grid-column: 1 / -1;
+      }
+
+      .actions .text-button,
+      .custom .text-button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+
+    .track-card {
+      display: grid;
+      grid-template-columns: 96px minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(184, 255, 0, .08), rgba(255, 45, 120, .08)),
+        rgba(255, 255, 255, .045);
+    }
+
+    .track-art-frame {
+      width: 96px;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(184, 255, 0, .42), transparent 42%),
+        radial-gradient(circle at 76% 72%, rgba(255, 45, 120, .46), transparent 42%),
+        #090909;
+      box-shadow: 0 0 32px rgba(184, 255, 0, .13), 0 0 46px rgba(255, 45, 120, .14);
+      flex: 0 0 auto;
+    }
+
+    .track-art-frame img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .track-copy {
+      min-width: 0;
+    }
+
+    .track-artist,
+    .track-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .track-artist {
+      color: var(--lime);
+      font-size: clamp(1.1rem, 2.1vw, 1.55rem);
+      line-height: 1.1;
+    }
+
+    .track-title {
+      margin-top: 3px;
+      color: #fff;
+      font-size: clamp(1.35rem, 2.8vw, 2.1rem);
+      line-height: 1.05;
+    }
+
+    .track-updated {
+      margin-top: 7px;
+      color: rgba(255, 255, 255, .46);
+      font-size: .82rem;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 760px) {
+      .track-card {
+        grid-template-columns: 72px minmax(0, 1fr);
+        gap: 10px;
+        padding: 11px;
+      }
+
+      .track-art-frame {
+        width: 72px;
+      }
+
+      .track-artist,
+      .track-title {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+      }
+
+      .track-artist {
+        font-size: .98rem;
+      }
+
+      .track-title {
+        font-size: 1.14rem;
+      }
+
+      .track-updated {
+        font-size: .74rem;
+      }
+
+      .track-refresh {
+        grid-column: 1 / -1;
+        width: 100%;
+        justify-content: center;
+      }
+    }
+    /* Mobile-first radio controls */
+    @media (max-width: 760px) {
+      body {
+        min-height: 100svh;
+      }
+
+      .app {
+        width: min(100vw - 14px, 760px);
+        padding: 10px 0 18px;
+      }
+
+      .topbar {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .brand {
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .mark {
+        width: 36px;
+        height: 36px;
+        margin-top: 2px;
+      }
+
+      h1 {
+        font-size: clamp(1.55rem, 9vw, 2.2rem);
+        line-height: 1.04;
+      }
+
+      .subtitle {
+        margin-top: 4px;
+        font-size: .82rem;
+        line-height: 1.35;
+      }
+
+      .source-note {
+        display: none;
+      }
+
+      .layout {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .player-shell {
+        order: -1;
+        width: 100%;
+        min-height: 0;
+        grid-template-rows: auto minmax(0, 1fr);
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        overflow: visible;
+        box-shadow: 0 14px 42px rgba(0, 0, 0, .46), 0 0 38px rgba(255, 45, 120, .12);
+      }
+
+      .now {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 68px;
+        gap: 10px;
+        align-items: center;
+        padding: 12px;
+      }
+
+      .now-title {
+        font-size: clamp(1.6rem, 9vw, 2.6rem);
+        line-height: 1;
+      }
+
+      .now-meta {
+        margin-top: 8px;
+        gap: 6px;
+      }
+
+      .meta-pill {
+        min-height: 26px;
+        padding: 0 8px;
+        font-size: .72rem;
+      }
+
+      .meter {
+        width: 62px;
+        min-width: 62px;
+        box-shadow: 0 0 26px rgba(184, 255, 0, .16), 0 0 32px rgba(255, 45, 120, .12);
+      }
+
+      .meter-inner {
+        font-size: .72rem;
+      }
+
+      .controls {
+        gap: 10px;
+        padding: 12px;
+      }
+
+      .transport {
+        display: grid;
+        grid-template-columns: 48px 64px 48px;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .icon-button {
+        width: 48px;
+        height: 48px;
+      }
+
+      .transport .big {
+        width: 64px;
+        height: 64px;
+      }
+
+      .volume {
+        grid-column: 1 / -1;
+        width: 100%;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        font-size: .84rem;
+      }
+
+      .status-line {
+        min-height: auto;
+        font-size: .84rem;
+      }
+
+      .native-audio {
+        width: 100%;
+        max-width: none;
+      }
+
+      .details,
+      .actions,
+      .custom {
+        display: none;
+      }
+
+      .sidebar {
+        width: 100%;
+        overflow: visible;
+      }
+
+      .filters {
+        padding: 10px;
+      }
+
+      .search input {
+        min-height: 48px;
+        font-size: 16px;
+      }
+
+      .chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+      }
+
+      .chips::-webkit-scrollbar {
+        display: none;
+      }
+
+      .chip {
+        flex: 0 0 auto;
+        min-height: 38px;
+        padding: 0 13px;
+        font-size: .7rem;
+        white-space: nowrap;
+      }
+
+      .station-list {
+        max-height: none;
+        overflow: visible;
+        padding: 8px;
+        gap: 9px;
+      }
+
+      .station-card {
+        min-height: 86px;
+        grid-template-columns: 10px minmax(0, 1fr) 42px;
+        padding: 13px 12px;
+        touch-action: manipulation;
+      }
+
+      .station-title {
+        font-size: 1.02rem;
+        white-space: normal;
+        line-height: 1.15;
+      }
+
+      .station-genre {
+        font-size: .82rem;
+      }
+
+      .station-card .icon-button {
+        width: 42px;
+        height: 42px;
+      }
+    }
+
+    /* Volumetric 3D buttons and language switch */
+    .top-actions {
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .language-toggle {
+      min-width: 72px;
+      justify-content: center;
+    }
+
+    button,
+    .text-button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .icon-button,
+    .text-button,
+    .chip,
+    .station-card {
+      transform-style: preserve-3d;
+      will-change: transform, box-shadow, filter;
+      transition:
+        transform .22s cubic-bezier(.2, .8, .18, 1),
+        box-shadow .22s cubic-bezier(.2, .8, .18, 1),
+        filter .22s ease,
+        border-color .22s ease,
+        background .22s ease;
+    }
+
+    .icon-button,
+    .chip,
+    .station-card {
+      box-shadow:
+        0 9px 0 rgba(0, 0, 0, .46),
+        0 18px 34px rgba(0, 0, 0, .42),
+        inset 0 1px 0 rgba(255, 255, 255, .22),
+        inset 0 -10px 18px rgba(0, 0, 0, .18);
+    }
+
+    .text-button {
+      box-shadow:
+        0 10px 0 rgba(55, 8, 31, .72),
+        0 20px 42px rgba(0, 0, 0, .42),
+        0 0 28px rgba(184, 255, 0, .08),
+        inset 0 1px 0 rgba(255, 255, 255, .2);
+    }
+
+    .transport .big {
+      box-shadow:
+        0 12px 0 rgba(116, 13, 59, .82),
+        0 24px 50px rgba(0, 0, 0, .48),
+        0 0 42px rgba(184, 255, 0, .28),
+        0 0 70px rgba(255, 45, 120, .22),
+        inset 0 2px 0 rgba(255, 255, 255, .44),
+        inset 0 -18px 26px rgba(0, 0, 0, .22);
+      animation: brandShift 3.2s ease infinite, buttonGlowPulse 2.8s ease-in-out infinite;
+    }
+
+    .icon-button::before,
+    .chip::before,
+    .station-card::before {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: inherit;
+      pointer-events: none;
+      background: linear-gradient(145deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, 0) 42%);
+      opacity: .58;
+      transition: opacity .22s ease, transform .22s ease;
+    }
+
+    .icon-button::after,
+    .chip::after,
+    .station-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: linear-gradient(105deg, transparent 0%, rgba(255, 255, 255, .26) 46%, transparent 58%);
+      opacity: 0;
+      transform: translateX(-120%) skewX(-14deg);
+      transition: transform .55s ease, opacity .18s ease;
+    }
+
+    .icon-button:hover,
+    .text-button:hover,
+    .chip:hover,
+    .station-card:hover {
+      filter: saturate(1.18) contrast(1.05);
+      transform: perspective(900px) translateY(-6px) translateZ(14px) rotateX(7deg) rotateY(-3deg) scale(1.015);
+    }
+
+    .icon-button:hover::after,
+    .chip:hover::after,
+    .station-card:hover::after {
+      opacity: 1;
+      transform: translateX(120%) skewX(-14deg);
+    }
+
+    .icon-button:active,
+    .text-button:active,
+    .chip:active,
+    .station-card:active {
+      filter: saturate(1.05);
+      transform: perspective(900px) translateY(5px) translateZ(0) rotateX(0deg) rotateY(0deg) scale(.985);
+      box-shadow:
+        0 3px 0 rgba(0, 0, 0, .55),
+        0 8px 18px rgba(0, 0, 0, .38),
+        inset 0 2px 9px rgba(0, 0, 0, .34);
+    }
+
+    .chip.active,
+    .station-card.active,
+    .text-button.active {
+      transform: perspective(900px) translateZ(8px);
+      box-shadow:
+        0 11px 0 rgba(116, 13, 59, .72),
+        0 22px 48px rgba(0, 0, 0, .46),
+        0 0 34px rgba(184, 255, 0, .2),
+        0 0 50px rgba(255, 45, 120, .18),
+        inset 0 1px 0 rgba(255, 255, 255, .26);
+    }
+
+    @keyframes buttonGlowPulse {
+      0%, 100% { filter: saturate(1) brightness(1); }
+      50% { filter: saturate(1.25) brightness(1.08); }
+    }
+
+    @media (max-width: 760px) {
+      .top-actions {
+        margin-top: 10px;
+        justify-content: space-between;
+      }
+
+      .language-toggle {
+        min-height: 42px;
+        min-width: 74px;
+      }
+
+      .icon-button:hover,
+      .text-button:hover,
+      .chip:hover,
+      .station-card:hover {
+        transform: translateY(-2px) scale(1.01);
+      }
+    }
+
+    /* Gooey RADIO 247 background */
+    :root {
+      --gooey-bg: url("data:image/webp;base64,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");
+    }
+
+    body {
+      background-color: #080808;
+      background-image:
+        linear-gradient(180deg, rgba(8, 8, 8, .08) 0%, rgba(8, 8, 8, .28) 42%, rgba(8, 8, 8, .9) 100%),
+        var(--gooey-bg);
+      background-repeat: no-repeat, no-repeat;
+      background-size: cover, cover;
+      background-position: center center, center center;
+      background-attachment: fixed, fixed;
+    }
+
+    body::before {
+      opacity: .2;
+      mix-blend-mode: soft-light;
+    }
+
+    .topbar {
+      text-shadow: 0 3px 18px rgba(0, 0, 0, .45);
+    }
+
+    .sidebar,
+    .player-shell {
+      background: rgba(5, 5, 5, .44);
+      border-color: rgba(255, 255, 255, .14);
+      box-shadow: 0 26px 88px rgba(0, 0, 0, .52), 0 0 80px rgba(255, 45, 120, .1);
+    }
+
+    .filters,
+    .now {
+      background:
+        linear-gradient(135deg, rgba(184, 255, 0, .11), rgba(255, 45, 120, .13)),
+        rgba(6, 6, 6, .62);
+    }
+
+    .station-card,
+    .track-card,
+    .info-block,
+    .custom,
+    .meta-pill {
+      background-color: rgba(7, 7, 7, .42);
+      backdrop-filter: blur(18px) saturate(1.18);
+    }
+
+    .search input,
+    .custom input {
+      background: rgba(4, 4, 4, .54);
+    }
+
+    @media (max-width: 760px) {
+      body {
+        background-image:
+          linear-gradient(180deg, rgba(8, 8, 8, .14) 0%, rgba(8, 8, 8, .46) 36%, rgba(8, 8, 8, .9) 78%, rgba(8, 8, 8, .98) 100%),
+          var(--gooey-bg);
+        background-size: cover, 100vw auto;
+        background-position: center top, center 58px;
+        background-attachment: scroll, scroll;
+      }
+
+      .player-shell {
+        background: rgba(6, 6, 6, .74);
+      }
+
+      .sidebar {
+        background: rgba(6, 6, 6, .56);
+      }
+
+      .station-card,
+      .track-card,
+      .filters,
+      .now {
+        backdrop-filter: blur(20px) saturate(1.18);
+      }
+    }
+    /* END Gooey RADIO 247 background */
+  
+    /* First-screen image hero and stronger 3D controls */
+    body {
+      background-color: #070708;
+      background-image:
+        radial-gradient(circle at 12% 0%, rgba(184, 255, 0, .26) 0 12%, transparent 34%),
+        radial-gradient(circle at 88% 10%, rgba(255, 45, 120, .28) 0 10%, transparent 35%),
+        linear-gradient(180deg, #111112 0%, #09090a 36%, #050506 100%);
+      background-repeat: no-repeat;
+      background-size: auto;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .app { padding-top: 0; }
+
+    .gooey-hero {
+      position: relative;
+      width: 100vw;
+      height: clamp(260px, 46vw, 620px);
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      overflow: hidden;
+      isolation: isolate;
+      background-image: var(--gooey-bg);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center center;
+    }
+
+    .gooey-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, .22) 0%, rgba(0, 0, 0, .02) 42%, rgba(0, 0, 0, .45) 100%),
+        radial-gradient(circle at 50% 16%, rgba(184, 255, 0, .18), transparent 36%),
+        radial-gradient(circle at 48% 78%, rgba(255, 45, 120, .22), transparent 42%);
+      mix-blend-mode: multiply;
+    }
+
+    .gooey-title {
+      position: absolute;
+      z-index: 1;
+      left: max(18px, calc((100vw - 1280px) / 2 + 24px));
+      right: max(18px, calc((100vw - 1280px) / 2 + 24px));
+      top: clamp(18px, 5vw, 82px);
+      margin: 0;
+      color: #fff;
+      font-size: clamp(2.5rem, 9.5vw, 9rem);
+      line-height: .84;
+      letter-spacing: 0;
+      text-align: center;
+      -webkit-text-fill-color: #fff;
+      background: none;
+      text-shadow:
+        0 3px 0 rgba(255, 45, 120, .86),
+        0 7px 0 rgba(38, 4, 23, .86),
+        0 16px 36px rgba(0, 0, 0, .68),
+        0 0 34px rgba(184, 255, 0, .38),
+        0 0 60px rgba(255, 45, 120, .32);
+      transform: perspective(900px) rotateX(6deg) translateZ(24px);
+    }
+
+    .topbar { margin-top: 22px; }
+
+    .interface-title {
+      margin: 0;
+      font-family: "Yatra One", "Arial Narrow", Impact, sans-serif;
+      font-size: clamp(1.38rem, 1.8vw, 2rem);
+      line-height: 1;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, var(--lime), var(--pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: none;
+    }
+
+    .icon-button,
+    .text-button,
+    .chip,
+    .station-card {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      border-radius: 8px;
+      transform-style: preserve-3d;
+      transform: perspective(1000px) translateZ(0);
+      border-color: rgba(255, 255, 255, .18);
+      box-shadow:
+        0 11px 0 rgba(44, 5, 27, .9),
+        0 22px 42px rgba(0, 0, 0, .5),
+        0 0 34px rgba(184, 255, 0, .08),
+        inset 0 1px 0 rgba(255, 255, 255, .32),
+        inset 0 -14px 22px rgba(0, 0, 0, .28);
+    }
+
+    .text-button {
+      border: 1px solid rgba(255, 255, 255, .16);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, 0) 36%),
+        linear-gradient(135deg, rgba(184, 255, 0, .16), rgba(255, 45, 120, .22)),
+        #121214;
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, .8);
+    }
+
+    .icon-button,
+    .chip {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .02) 38%),
+        linear-gradient(135deg, rgba(184, 255, 0, .12), rgba(255, 45, 120, .16)),
+        #111113;
+    }
+
+    .station-card {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .03) 42%),
+        linear-gradient(135deg, rgba(184, 255, 0, .08), rgba(255, 45, 120, .1)),
+        rgba(9, 9, 11, .78);
+      box-shadow:
+        0 10px 0 rgba(28, 3, 19, .9),
+        0 22px 40px rgba(0, 0, 0, .46),
+        0 0 30px rgba(184, 255, 0, .07),
+        inset 0 1px 0 rgba(255, 255, 255, .24),
+        inset 0 -16px 24px rgba(0, 0, 0, .26);
+    }
+
+    .transport .big {
+      border: 1px solid rgba(255, 255, 255, .28);
+      box-shadow:
+        0 14px 0 rgba(112, 9, 56, .96),
+        0 28px 58px rgba(0, 0, 0, .58),
+        0 0 48px rgba(184, 255, 0, .36),
+        0 0 80px rgba(255, 45, 120, .28),
+        inset 0 2px 0 rgba(255, 255, 255, .58),
+        inset 0 -20px 30px rgba(0, 0, 0, .26);
+    }
+
+    .icon-button::before,
+    .text-button::before,
+    .chip::before,
+    .station-card::before {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      z-index: 0;
+      padding: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 28% 12%, rgba(255, 255, 255, .52), transparent 24%),
+        linear-gradient(145deg, rgba(255, 255, 255, .26), rgba(255, 255, 255, 0) 44%);
+      opacity: .72;
+      -webkit-mask: none;
+      mask: none;
+    }
+
+    .icon-button::after,
+    .text-button::after,
+    .chip::after,
+    .station-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: linear-gradient(105deg, transparent 8%, rgba(255, 255, 255, .44) 44%, transparent 58%);
+      opacity: 0;
+      transform: translateX(-125%) skewX(-14deg);
+      transition: transform .62s ease, opacity .2s ease;
+    }
+
+    .icon-button svg,
+    .text-button svg,
+    .text-button span,
+    .station-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .icon-button:hover,
+    .text-button:hover,
+    .chip:hover,
+    .station-card:hover {
+      filter: saturate(1.2) contrast(1.07);
+      transform: perspective(1000px) translateY(-9px) translateZ(26px) rotateX(9deg) rotateY(-4deg) scale(1.018);
+      box-shadow:
+        0 16px 0 rgba(44, 5, 27, .88),
+        0 34px 62px rgba(0, 0, 0, .56),
+        0 0 42px rgba(184, 255, 0, .22),
+        0 0 60px rgba(255, 45, 120, .2),
+        inset 0 1px 0 rgba(255, 255, 255, .4),
+        inset 0 -16px 26px rgba(0, 0, 0, .24);
+    }
+
+    .icon-button:hover::after,
+    .text-button:hover::after,
+    .chip:hover::after,
+    .station-card:hover::after {
+      opacity: 1;
+      transform: translateX(125%) skewX(-14deg);
+    }
+
+    .icon-button:active,
+    .text-button:active,
+    .chip:active,
+    .station-card:active {
+      transform: perspective(1000px) translateY(7px) translateZ(0) scale(.982);
+      box-shadow:
+        0 3px 0 rgba(30, 3, 20, .92),
+        0 8px 18px rgba(0, 0, 0, .48),
+        inset 0 3px 14px rgba(0, 0, 0, .42);
+    }
+
+    .chip.active,
+    .station-card.active,
+    .text-button.active {
+      border-color: rgba(255, 255, 255, .26);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .04) 42%),
+        linear-gradient(135deg, rgba(184, 255, 0, .3), rgba(255, 45, 120, .34)),
+        #101012;
+      box-shadow:
+        0 13px 0 rgba(94, 8, 47, .94),
+        0 28px 58px rgba(0, 0, 0, .55),
+        0 0 42px rgba(184, 255, 0, .24),
+        0 0 60px rgba(255, 45, 120, .22),
+        inset 0 1px 0 rgba(255, 255, 255, .36);
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        width: 100%;
+        padding: 0 10px 18px;
+      }
+
+      .gooey-hero {
+        width: calc(100% + 20px);
+        height: clamp(210px, 58vw, 360px);
+        margin-left: -10px;
+        margin-right: -10px;
+        background-size: cover;
+        background-position: center center;
+      }
+
+      .gooey-title {
+        left: 14px;
+        right: 14px;
+        top: 16px;
+        font-size: clamp(2rem, 12vw, 4.8rem);
+        line-height: .9;
+        transform: perspective(700px) rotateX(5deg) translateZ(12px);
+      }
+
+      .topbar { margin-top: 12px; }
+      .interface-title { font-size: 1.45rem; }
+
+      .icon-button,
+      .text-button,
+      .chip,
+      .station-card {
+        box-shadow:
+          0 8px 0 rgba(44, 5, 27, .9),
+          0 16px 30px rgba(0, 0, 0, .48),
+          inset 0 1px 0 rgba(255, 255, 255, .28),
+          inset 0 -12px 18px rgba(0, 0, 0, .24);
+      }
+
+      .icon-button:hover,
+      .text-button:hover,
+      .chip:hover,
+      .station-card:hover {
+        transform: perspective(800px) translateY(-2px) translateZ(6px) scale(1.01);
+      }
+    }
+
+    @media (max-width: 420px) {
+      .gooey-hero { height: clamp(188px, 60vw, 300px); }
+      .gooey-title { font-size: clamp(1.8rem, 11.6vw, 3.4rem); }
+    }
+  
+    /* Reference buttons: showcase 03 glass + 05 neon, language 07 split */
+    .compact-topbar {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .intro-note {
+      margin: 0;
+      max-width: 820px;
+      font-family: "Ink Free", "Segoe Print", "Bradley Hand ITC", "Yatra One", cursive;
+      font-size: clamp(1rem, 1.45vw, 1.42rem);
+      line-height: 1.22;
+      color: rgba(255, 255, 255, .8);
+      text-shadow: 0 0 18px rgba(184, 255, 0, .12), 0 2px 18px rgba(0, 0, 0, .52);
+    }
+
+    .icon-button,
+    .text-button,
+    .chip,
+    .station-card {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      border: 2px solid rgba(184, 255, 0, .68);
+      background: rgba(255, 255, 255, .05);
+      color: var(--lime);
+      backdrop-filter: blur(20px) saturate(1.16);
+      text-shadow: 0 0 10px var(--lime), 0 0 30px rgba(184, 255, 0, .42);
+      box-shadow: 0 0 15px rgba(184, 255, 0, .3), inset 0 0 15px rgba(184, 255, 0, .05);
+      animation: radioNeonPulse 2s ease-in-out infinite;
+      transition: transform .22s ease, border-color .3s ease, color .3s ease, box-shadow .3s ease, background .3s ease;
+    }
+
+    .text-button,
+    .chip,
+    .icon-button {
+      border-radius: 999px;
+    }
+
+    .station-card {
+      border-radius: 18px;
+      color: #fff;
+      text-shadow: none;
+      background: rgba(10, 10, 10, .58);
+      border-color: rgba(184, 255, 0, .42);
+    }
+
+    .icon-button::before,
+    .text-button::before,
+    .chip::before,
+    .station-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      border-radius: inherit;
+      padding: 2px;
+      pointer-events: none;
+      background: conic-gradient(from 0deg, transparent, var(--lime), var(--pink), transparent);
+      opacity: .62;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: radioBorderSpin 3s linear infinite;
+    }
+
+    .icon-button::after,
+    .text-button::after,
+    .chip::after,
+    .station-card::after {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      z-index: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.12), transparent 38%),
+        rgba(10, 10, 10, .62);
+      opacity: .88;
+      transform: none;
+    }
+
+    .icon-button svg,
+    .text-button svg,
+    .text-button span,
+    .station-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .icon-button:hover,
+    .text-button:hover,
+    .chip:hover,
+    .station-card:hover {
+      color: var(--pink);
+      border-color: var(--pink);
+      text-shadow: 0 0 10px var(--pink), 0 0 30px rgba(255,45,120,.5);
+      box-shadow: 0 0 30px rgba(255,45,120,.5), inset 0 0 20px rgba(255,45,120,.1);
+      animation: none;
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    .icon-button:active,
+    .text-button:active,
+    .chip:active,
+    .station-card:active {
+      transform: translateY(1px) scale(.98);
+      box-shadow: 0 0 12px rgba(255,45,120,.28), inset 0 0 22px rgba(255,45,120,.18);
+    }
+
+    .chip.active,
+    .station-card.active,
+    .text-button.active {
+      color: #fff;
+      border-color: rgba(255, 45, 120, .8);
+      background: rgba(255, 45, 120, .12);
+      box-shadow: 0 0 34px rgba(255,45,120,.42), inset 0 0 22px rgba(255,45,120,.16);
+    }
+
+    .transport .big {
+      border-color: rgba(184, 255, 0, .86);
+      color: #080808;
+      background: linear-gradient(135deg, var(--lime), var(--pink), var(--lime));
+      background-size: 200% 200%;
+      text-shadow: none;
+      box-shadow: 0 0 35px rgba(184,255,0,.52), 0 0 70px rgba(255,45,120,.32), inset 0 0 15px rgba(255,255,255,.28);
+      animation: brandShift 3s ease infinite, radioNeonPulse 2s ease-in-out infinite;
+    }
+
+    .language-toggle {
+      min-height: 46px;
+      min-width: 112px;
+      padding: 0;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      overflow: hidden;
+      color: inherit;
+      text-shadow: none;
+      box-shadow: 0 0 24px rgba(184,255,0,.18), 0 0 36px rgba(255,45,120,.14);
+      animation: none;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .language-toggle::before,
+    .language-toggle::after {
+      display: none;
+    }
+
+    .language-left,
+    .language-right {
+      display: grid;
+      place-items: center;
+      min-width: 54px;
+      padding: 0 14px;
+      font-size: .8rem;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      transition: padding .3s ease, background .3s ease, color .3s ease;
+    }
+
+    .language-left {
+      background: var(--lime);
+      color: #080808;
+      padding-left: 20px;
+    }
+
+    .language-right {
+      background: var(--pink);
+      color: #fff;
+      padding-right: 20px;
+    }
+
+    .language-toggle:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 34px rgba(184,255,0,.24), 0 0 52px rgba(255,45,120,.24);
+    }
+
+    .language-toggle:hover .language-left {
+      padding-left: 20px;
+      padding-right: 8px;
+      background: var(--pink);
+      color: #fff;
+    }
+
+    .language-toggle:hover .language-right {
+      padding-left: 8px;
+      padding-right: 20px;
+      background: var(--lime);
+      color: #080808;
+    }
+
+    @keyframes radioNeonPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(184,255,0,.3), inset 0 0 15px rgba(184,255,0,.05); }
+      50% { box-shadow: 0 0 35px rgba(184,255,0,.6), inset 0 0 25px rgba(184,255,0,.1); }
+    }
+
+    @keyframes radioBorderSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 760px) {
+      .compact-topbar {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .intro-note {
+        font-size: 1.08rem;
+      }
+
+      .top-actions {
+        width: 100%;
+        margin-top: 0;
+      }
+
+      .language-toggle {
+        min-width: 104px;
+        min-height: 44px;
+      }
+
+      .language-left,
+      .language-right {
+        min-width: 50px;
+        padding-left: 12px;
+        padding-right: 12px;
+        font-size: .72rem;
+      }
+    }
+  
+    .chip span { position: relative; z-index: 1; }
+  
+    /* Language toggle labels: always show EN and UA */
+    .language-toggle .language-left,
+    .language-toggle .language-right {
+      min-width: 52px;
+      font-weight: 900;
+    }
+
+    .language-toggle.is-en .language-left,
+    .language-toggle.is-uk .language-right {
+      background: var(--lime);
+      color: #080808;
+      text-shadow: none;
+      box-shadow: inset 0 0 18px rgba(255, 255, 255, .18);
+    }
+
+    .language-toggle.is-en .language-right,
+    .language-toggle.is-uk .language-left {
+      background: var(--pink);
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, .24);
+    }
+
+    .language-toggle:hover .language-left,
+    .language-toggle:hover .language-right {
+      padding-left: 14px;
+      padding-right: 14px;
+    }
+
+    .language-toggle:hover.is-en .language-left,
+    .language-toggle:hover.is-uk .language-right {
+      background: var(--lime);
+      color: #080808;
+    }
+
+    .language-toggle:hover.is-en .language-right,
+    .language-toggle:hover.is-uk .language-left {
+      background: var(--pink);
+      color: #fff;
+    }
+  
+    /* Small slanted Ink-style hero signature */
+    .gooey-title {
+      width: max-content;
+      max-width: calc(100vw - 36px);
+      left: max(18px, calc((100vw - 1280px) / 2 + 30px));
+      right: auto;
+      top: clamp(18px, 4.2vw, 58px);
+      margin: 0;
+      padding: 0;
+      font-family: "Ink Free", "Segoe Print", "Bradley Hand ITC", "Yatra One", cursive;
+      font-size: clamp(1.05rem, 2.25vw, 2rem);
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: .02em;
+      text-transform: none;
+      color: rgba(255, 255, 255, .94);
+      -webkit-text-fill-color: rgba(255, 255, 255, .94);
+      background: none;
+      text-align: left;
+      text-shadow:
+        0 2px 0 rgba(255, 45, 120, .5),
+        0 0 20px rgba(184, 255, 0, .22),
+        0 8px 22px rgba(0, 0, 0, .58);
+      transform: rotate(-7deg) skewX(-5deg);
+      transform-origin: left center;
+    }
+
+    @media (max-width: 760px) {
+      .gooey-title {
+        left: 16px;
+        right: auto;
+        top: 14px;
+        font-size: clamp(1rem, 5vw, 1.45rem);
+        transform: rotate(-7deg) skewX(-5deg);
+      }
+    }
+  
+    .station-play svg {
+      fill: currentColor;
+      stroke: currentColor;
+    }
+    /* Smartphone station list and background playback tuning */
+    @media (max-width: 760px) {
+      html {
+        min-height: 100%;
+      }
+
+      body {
+        min-height: 100svh;
+        padding-bottom: env(safe-area-inset-bottom);
+        overscroll-behavior-y: contain;
+      }
+
+      .app {
+        width: 100%;
+        padding: 0 10px 190px;
+        padding-bottom: calc(min(26svh, 190px) + env(safe-area-inset-bottom) + 16px);
+      }
+
+      .layout {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .gooey-hero {
+        height: clamp(128px, 34vw, 178px);
+        min-height: 0;
+      }
+
+      .compact-topbar {
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+
+      .intro-note {
+        max-height: 2.45em;
+        overflow: hidden;
+        font-size: .9rem;
+        line-height: 1.22;
+      }
+
+      .top-actions {
+        justify-content: flex-end;
+      }
+
+      .sidebar {
+        order: 1;
+        width: 100%;
+        overflow: visible;
+      }
+
+      .filters {
+        position: sticky;
+        top: 0;
+        z-index: 7;
+        padding: 8px;
+        border-radius: 0 0 16px 16px;
+        backdrop-filter: blur(22px) saturate(1.2);
+      }
+
+      .search {
+        min-height: 34px;
+      }
+
+      .search input {
+        min-height: 34px;
+        font-size: .88rem;
+      }
+
+      .chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        gap: 6px;
+      }
+
+      .chip {
+        min-height: 34px;
+        padding: 0 11px;
+        white-space: nowrap;
+        font-size: .72rem;
+      }
+
+      .station-list {
+        max-height: none;
+        overflow: visible;
+        padding: 10px 0 0;
+        gap: 10px;
+      }
+
+      .station-card {
+        min-height: 76px;
+        grid-template-columns: 8px minmax(0, 1fr) 46px;
+        padding: 12px;
+        border-radius: 16px;
+        touch-action: manipulation;
+        scroll-margin-top: 86px;
+      }
+
+      .station-title {
+        font-size: 1rem;
+        line-height: 1.12;
+      }
+
+      .station-genre {
+        font-size: .78rem;
+        line-height: 1.25;
+      }
+
+      .station-card .icon-button {
+        width: 44px;
+        height: 44px;
+      }
+
+      .player-shell {
+        order: 2;
+        position: static;
+        z-index: 20;
+        width: 100%;
+        min-height: 0;
+        max-height: none;
+        grid-template-rows: auto minmax(0, 1fr);
+        border-radius: 18px;
+        margin: 10px 0 0;
+        overflow: visible;
+        overscroll-behavior: contain;
+        box-shadow: 0 -18px 48px rgba(0, 0, 0, .58), 0 0 45px rgba(255, 45, 120, .18);
+      }
+
+      .player-shell.playing {
+        position: fixed;
+        left: 10px;
+        right: 10px;
+        top: auto;
+        bottom: env(safe-area-inset-bottom);
+        width: auto;
+        max-height: min(26svh, 190px);
+        border-radius: 18px 18px 0 0;
+        margin: 0;
+        overflow: auto;
+      }
+
+      .now {
+        grid-template-columns: minmax(0, 1fr) 42px;
+        padding: 7px 10px;
+      }
+
+      .now-title {
+        font-size: clamp(1rem, 5vw, 1.35rem);
+      }
+
+      .meter {
+        width: 40px;
+        min-width: 40px;
+      }
+
+      .controls {
+        padding: 8px 10px 10px;
+        gap: 6px;
+      }
+
+      .transport {
+        grid-template-columns: 42px 52px 42px;
+        gap: 7px;
+      }
+
+      .icon-button {
+        width: 42px;
+        height: 42px;
+      }
+
+      .transport .big {
+        width: 52px;
+        height: 52px;
+      }
+
+      .native-audio {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        min-height: 1px;
+        opacity: .01;
+        pointer-events: none;
+      }
+
+      .track-card {
+        grid-template-columns: 52px minmax(0, 1fr);
+        padding: 7px;
+      }
+
+      .track-art-frame {
+        width: 52px;
+        height: 52px;
+      }
+
+      .track-refresh {
+        display: none;
+      }
+
+      .status-line,
+      .track-card .info-label {
+        display: none;
+      }
+      .track-artist,
+      .track-title,
+      .track-updated {
+        line-height: 1.12;
+      }
+
+      .track-updated {
+        display: none;
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      .station-card:hover,
+      .icon-button:hover,
+      .text-button:hover,
+      .chip:hover {
+        transform: none;
+      }
+
+      .station-card:active {
+        transform: scale(.99);
+      }
+    }
+
+
+  /* ================================================
+     HERO REDESIGN — RADIO STATIONS 24/7
+     ================================================ */
+
+  .gooey-hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .hero-titles-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%) perspective(900px) rotateX(5deg) translateZ(12px);
+    z-index: 2;
+    text-align: center;
+    width: 92%;
+    pointer-events: none;
+  }
+
+  .hero-main-title {
+    display: block;
+    font-family: "Yatra One", "Arial Narrow", Impact, sans-serif;
+    font-size: clamp(1.6rem, 6.5vw, 5.8rem);
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    background: linear-gradient(92deg, #B8FF00 0%, #e8ffb0 48%, #FF2D78 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 24px rgba(184,255,0,0.45)) drop-shadow(0 4px 8px rgba(0,0,0,0.7));
+    animation: heroTitlePulse 4s ease-in-out infinite;
+  }
+
+  .hero-main-247 {
+    display: block;
+    font-family: "Yatra One", "Arial Narrow", Impact, sans-serif;
+    font-size: clamp(5rem, 24vw, 20rem);
+    line-height: 0.78;
+    letter-spacing: -0.03em;
+    background: linear-gradient(180deg, #FF2D78 0%, #ff7aaa 35%, #B8FF00 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 60px rgba(255,45,120,0.55)) drop-shadow(0 0 20px rgba(184,255,0,0.3));
+    animation: hero247Pulse 3.6s ease-in-out infinite;
+  }
+
+  @keyframes heroTitlePulse {
+    0%, 100% { filter: drop-shadow(0 0 24px rgba(184,255,0,0.45)) drop-shadow(0 4px 8px rgba(0,0,0,0.7)); }
+    50%       { filter: drop-shadow(0 0 42px rgba(184,255,0,0.75)) drop-shadow(0 4px 8px rgba(0,0,0,0.7)); }
+  }
+
+  @keyframes hero247Pulse {
+    0%, 100% { filter: drop-shadow(0 0 60px rgba(255,45,120,0.55)) drop-shadow(0 0 20px rgba(184,255,0,0.3)); }
+    50%       { filter: drop-shadow(0 0 90px rgba(255,45,120,0.8))  drop-shadow(0 0 40px rgba(184,255,0,0.5)); }
+  }
+
+  /* Handwriting "by Burdik" at the bottom-right of hero */
+  .gooey-title {
+    position: absolute;
+    bottom: clamp(12px, 3vw, 28px);
+    right: max(18px, calc((100vw - 1280px) / 2 + 28px));
+    left: auto;
+    top: auto;
+    width: auto;
+    max-width: none;
+    z-index: 3;
+    margin: 0;
+    padding: 0;
+    font-family: "Caveat", "Ink Free", "Segoe Print", "Bradley Hand ITC", cursive;
+    font-size: clamp(1.1rem, 3.4vw, 2rem);
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: rgba(255,255,255,0.92);
+    -webkit-text-fill-color: rgba(255,255,255,0.92);
+    background: none;
+    text-align: right;
+    text-shadow:
+      0 2px 0 rgba(255,45,120,0.6),
+      0 0 22px rgba(184,255,0,0.28),
+      0 6px 20px rgba(0,0,0,0.62);
+    transform: rotate(-5deg) skewX(-4deg);
+    transform-origin: right center;
+    animation: signatureFade 5s ease-in-out infinite;
+  }
+
+  @keyframes signatureFade {
+    0%, 100% { opacity: 0.88; text-shadow: 0 2px 0 rgba(255,45,120,0.6), 0 0 22px rgba(184,255,0,0.28), 0 6px 20px rgba(0,0,0,0.62); }
+    50%       { opacity: 1;    text-shadow: 0 2px 0 rgba(255,45,120,0.8), 0 0 40px rgba(184,255,0,0.55), 0 6px 20px rgba(0,0,0,0.62); }
+  }
+
+  /* Scan line animation across hero */
+  .hero-scanlines {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .hero-scanlines::before {
+    content: "";
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, rgba(184,255,0,0.0) 10%, rgba(184,255,0,0.85) 50%, rgba(184,255,0,0.0) 90%, transparent 100%);
+    animation: scanLine 4s linear infinite;
+    border-radius: 2px;
+    filter: blur(1px);
+  }
+
+  .hero-scanlines::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0,0,0,0.06) 3px,
+      rgba(0,0,0,0.06) 4px
+    );
+    pointer-events: none;
+  }
+
+  @keyframes scanLine {
+    0%   { top: -4px; opacity: 0; }
+    5%   { opacity: 1; }
+    90%  { opacity: 0.6; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  @media (max-width: 760px) {
+    .hero-titles-wrapper {
+      transform: translate(-50%, -52%) perspective(600px) rotateX(4deg);
+    }
+    .hero-main-title {
+      font-size: clamp(1.3rem, 7vw, 3rem);
+      letter-spacing: 0.1em;
+    }
+    .hero-main-247 {
+      font-size: clamp(4rem, 26vw, 10rem);
+    }
+    .gooey-title {
+      font-size: clamp(0.95rem, 4.2vw, 1.45rem);
+      bottom: 10px;
+      right: 14px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .hero-main-title { font-size: clamp(1.1rem, 7.5vw, 2rem); }
+    .hero-main-247   { font-size: clamp(3.5rem, 28vw, 7rem);  }
+  }
+
+  /* ================================================
+     CUSTOM CURSOR + TRAIL (desktop only)
+     ================================================ */
+
+  body.has-cursor { cursor: none !important; }
+  body.has-cursor * { cursor: none !important; }
+
+  #cursor-dot {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #B8FF00;
+    pointer-events: none;
+    z-index: 999999;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px #B8FF00, 0 0 24px rgba(184,255,0,0.8), 0 0 40px rgba(184,255,0,0.4);
+    mix-blend-mode: screen;
+    transition: transform 0.12s ease;
+    will-change: left, top;
+  }
+
+  #cursor-dot.over-interactive {
+    transform: translate(-50%, -50%) scale(2.2);
+    box-shadow: 0 0 16px #B8FF00, 0 0 40px rgba(184,255,0,0.9);
+  }
+
+  .cursor-trail-el {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999990;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: screen;
+    will-change: left, top;
+  }
+
+  /* ================================================
+     FLOATING BACKGROUND PARTICLES
+     ================================================ */
+
+  #bg-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particleFloat linear infinite;
+  }
+
+  @keyframes particleFloat {
+    0%   { transform: translateY(105vh) translateX(0)   scale(0); opacity: 0; }
+    8%   { opacity: 1; scale(1); }
+    50%  { transform: translateY(50vh)  translateX(20px) scale(1); }
+    92%  { opacity: 0.4; }
+    100% { transform: translateY(-8vh) translateX(-10px) scale(0.5); opacity: 0; }
+  }
+
+  /* ================================================
+     STATION CARD ENTRANCE ANIMATION
+     ================================================ */
+
+  @keyframes cardSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(22px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .station-card.animate-in {
+    animation: cardSlideIn 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  }
+
+
   </style>
+  
+  <!-- self-contained: no external CSS -->
 </head>
 <body>
-<div class="container">
-  <div class="header">Мобильное радио</div>
-  <div class="status" id="status">Выберите станцию для начала</div>
+  <main class="app" aria-label="Radio player">
+    <section class="gooey-hero" aria-label="RADIO STATIONS 24/7">
+      <div class="hero-scanlines" aria-hidden="true"></div>
+      <div class="hero-titles-wrapper" aria-hidden="true">
+        <div class="hero-main-title">RADIO STATIONS</div>
+        <div class="hero-main-247">24/7</div>
+      </div>
+      <p class="gooey-title" aria-label="by Burdik">by Burdik</p>
+    </section>
 
-  <div class="stations" id="stations"></div>
+    <header class="topbar compact-topbar">
+      <p class="subtitle intro-note">A curated set of commercial-free internet radio stations: jazz, soul, reggae, house, bassline, ragga jungle, liquid DnB, future garage, deep house, old school acid, old school house, Ukrainian and breaks.</p>
+      <div class="top-actions">
+        <div class="source-note">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span>Public live streams</span>
+        </div>
+        <button id="languageToggle" class="language-toggle is-en" type="button" aria-label="Switch language to Ukrainian" title="Switch language to Ukrainian">
+          <span class="language-left">EN</span>
+          <span class="language-right">UA</span>
+        </button>
+      </div>
+    </header>
 
-  <div class="player">
-    <div class="track-info">
-      <div class="track-title" id="trackTitle">—</div>
-      <div class="track-sub" id="trackSub">—</div>
-    </div>
+    <section class="layout">
+      <aside class="sidebar" aria-label="Stations">
+        <div class="filters">
+          <label class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m21 21-4.3-4.3"></path>
+              <circle cx="11" cy="11" r="7"></circle>
+            </svg>
+            <input id="searchInput" type="search" autocomplete="off" placeholder="Search by genre or station">
+          </label>
+          <div id="chips" class="chips" aria-label="Genre filters"></div>
+        </div>
+        <div id="stationList" class="station-list"></div>
+      </aside>
 
-    <div class="controls">
-      <button class="play-btn" id="playBtn" disabled>▶</button>
-    </div>
+      <section id="playerShell" class="player-shell" aria-label="Player">
+        <div class="now">
+          <div>
+            <h2 id="nowTitle" class="now-title">Choose a station</h2>
+            <div id="nowMeta" class="now-meta"></div>
+          </div>
+          <div class="meter" aria-hidden="true">
+            <div class="meter-inner">24/7</div>
+          </div>
+        </div>
 
-    <div class="volume">
-      <span>Громкость</span>
-      <input type="range" id="volume" min="0" max="1" step="0.01" value="0.8" />
-    </div>
-  </div>
-</div>
+        <div class="controls">
+          <div class="transport" aria-label="Playback controls">
+            <button id="prevButton" class="icon-button" title="Previous station" aria-label="Previous station">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 20 9 12l10-8v16z"></path>
+                <path d="M5 19V5"></path>
+              </svg>
+            </button>
+            <button id="playButton" class="icon-button big" title="Play" aria-label="Play">
+              <svg id="playIcon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 5v14l11-7z"></path>
+              </svg>
+            </button>
+            <button id="nextButton" class="icon-button" title="Next station" aria-label="Next station">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 4l10 8-10 8V4z"></path>
+                <path d="M19 5v14"></path>
+              </svg>
+            </button>
+            <label class="volume">
+              <span>Volume</span>
+              <input id="volumeInput" type="range" min="0" max="1" step="0.01" value="0.72">
+              <span id="volumeValue">72%</span>
+            </label>
+          </div>
 
-<script>
-  const STATIONS = [
-    {
-      id: "ukrainian-funk",
-      name: "Ukrainian Funk",
-      url: "https://stream.example.com/ukrainian-funk.mp3",
-      defaultTrack: "Ukrainian Funk & Groove"
-    },
-    {
-      id: "ukrainian-groove",
-      name: "Ukrainian Groove",
-      url: "https://stream.example.com/ukrainian-groove.mp3",
-      defaultTrack: "Deep Ukrainian Groove"
-    },
-    {
-      id: "somafm-deep-space",
-      name: "SomaFM Deep Space One",
-      url: "https://stream.somafm.com/deepspace1-128.mp3",
-      defaultTrack: "Deep ambient electronic & space"
-    },
-    {
-      id: "somafm-groove-salad",
-      name: "SomaFM Groove Salad",
-      url: "https://stream.somafm.com/groovesalad-128.mp3",
-      defaultTrack: "Chill, ambient, downtempo grooves"
-    },
-    {
-      id: "anjunadeep-radio",
-      name: "Anjunadeep Radio",
-      url: "https://stream.example.
-[03.07.2026 19:26] Burdik Human: com/anjunadeep.mp3",
-      defaultTrack: "Deep House, Melodic Techno, Downtempo"
-    },
-    {
-      id: "deepnova-deep-house",
-      name: "DeepNova Deep House",
-      url: "https://stream.example.com/deepnova.mp3",
-      defaultTrack: "Deep House 24/7, ad-free"
-    },
-    {
-      id: "pure-fm-uk",
-      name: "Pure FM UK",
-      url: "https://stream.example.com/purefmuk.mp3",
-      defaultTrack: "House, Garage, Jungle, DnB & underground"
-    },
-    {
-      id: "vision-radio-uk",
-      name: "Vision Radio UK",
-      url: "https://stream.example.com/visionradio.mp3",
-      defaultTrack: "UK Garage, UK Funky, House, Club Classics"
-    },
-    {
-      id: "garage-tape-packs",
-      name: "Garage Tape Packs",
-      url: "https://stream.example.com/gtp.mp3",
-      defaultTrack: "UKG, Deep House, DnB, Breaks, Amapiano"
-    },
-    {
-      id: "future-garage-live",
-      name: "Future Garage Live",
-      url: "https://stream.example.com/futuregarage.mp3",
-      defaultTrack: "Future Garage, Chillstep, Ambient"
-    },
-    {
-      id: "liquid-funk-efir",
-      name: "Liquid Funk (эфир)",
-      url: "https://dfm.ru/online/liquid-funk/stream",
-      defaultTrack: "Liquid DnB, Light Drum & Bass"
-    },
-    {
-      id: "oldschool-jungle-ragga",
-      name: "Old School Jungle & Ragga",
-      url: "https://stream.example.com/ragga-jungle.mp3",
-      defaultTrack: "Jungle, Ragga, Old School DnB"
-    },
-    {
-      id: "acid-house-radio",
-      name: "Acid House Radio",
-      url: "https://stream.example.com/acidhouse.mp3",
-      defaultTrack: "Acid, Old School House, Rave"
-    },
-    {
-      id: "soul-and-house-radio",
-      name: "Soul & All School House",
-      url: "https://stream.example.com/soulhouse.mp3",
-      defaultTrack: "Soul, All School House, Classic Vibes"
-    },
-    {
-      id: "radio-swiss-jazz",
-      name: "Radio Swiss Jazz",
-      url: "https://stream.srgssr.ch/radioswissjazz/radioswissjazz.m4a",
-      defaultTrack: "Jazz, Soul, Swing, Blues, Bebop"
-    },
-    {
-      id: "fip-france",
-      name: "FIP France",
-      url: "https://icecast.radiofrance.fr/fip-hifi.aac?id=radiofrance",
-      defaultTrack: "Eclectic: pop, rock, classic, jazz, groove, electro, world"
-    }
-  ];
+          <div id="statusLine" class="status-line">Player ready.</div>
+          <audio id="audio" class="native-audio" controls preload="none" playsinline webkit-playsinline x-webkit-airplay="allow" controlslist="nodownload noplaybackrate"></audio>
+          <div class="track-card" aria-live="polite">
+            <div class="track-art-frame">
+              <img id="trackArt" alt="Current track cover" src="">
+            </div>
+            <div class="track-copy">
+              <div class="info-label">Now playing</div>
+              <div id="trackArtist" class="track-artist">Live radio</div>
+              <div id="trackTitle" class="track-title">Choose a station</div>
+              <div id="trackUpdated" class="track-updated">Metadata appears after the station starts.</div>
+            </div>
+            <button id="refreshTrackButton" class="text-button track-refresh" type="button">
+              <span>Refresh</span>
+            </button>
+          </div>
 
-  const stationsEl = document.getElementById("stations");
-  const statusEl = document.getElementById("status");
-  const playBtn = document.getElementById("playBtn");
-  const volumeEl = document.getElementById("volume");
-  const trackTitleEl = document.getElementById("trackTitle");
-  const trackSubEl = document.getElementById("trackSub");
+          <div class="details" aria-label="Station information">
+            <div class="info-block">
+              <div class="info-label">Focus</div>
+              <div id="focusValue" class="info-value">Tap any station from the list.</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Source</div>
+              <div id="sourceValue" class="info-value">-</div>
+            </div>
+            <div class="info-block">
+              <div class="info-label">Stream</div>
+              <div id="streamValue" class="info-value">-</div>
+            </div>
+          </div>
 
-  let audio = null;
-  let mediaSession = null;
-  let currentStation = null;
-  let isPlaying = false;
+          <div class="actions">
+            <button id="favoriteButton" class="text-button" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3.5 14.7 9l6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9l6.1-.9L12 3.5z"></path>
+              </svg>
+              <span>Add to favorites</span>
+            </button>
+            <a id="siteLink" class="text-button" href="#" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"></path>
+                <path d="M14 11a5 5 0 0 0-7.1 0l-2 2A5 5 0 0 0 12 20.1l1.1-1.1"></path>
+              </svg>
+              <span>Station site</span>
+            </a>
+            <a id="streamLink" class="text-button" href="#" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <path d="M7 10l5 5 5-5"></path>
+                <path d="M12 15V3"></path>
+              </svg>
+              <span>Open stream</span>
+            </a>
+          </div>
 
-  if ("mediaSession" in navigator) {
-    mediaSession = navigator.mediaSession;
-  }
+          <form id="customForm" class="custom">
+            <div class="info-label">Custom stream</div>
+            <div class="custom-row">
+              <input id="customUrl" type="url" placeholder="https://example.com/stream.mp3">
+              <button class="text-button" type="submit">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 5v14"></path>
+                  <path d="M5 12h14"></path>
+                </svg>
+                <span>Add</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </section>
+  </main>
 
-  function initStations() {
-    stationsEl.innerHTML = "";
-    STATIONS.forEach((station) => {
-      const btn = document.createElement("button");
-      btn.className = "station-btn";
-      btn.textContent = station.name;
-      btn.addEventListener("click", () => {
-        const activeBtn = document.querySelector(".station-btn.active");
-        selectStation(station, btn);
-        if (activeBtn) activeBtn.classList.remove("active");
-      });
-      stationsEl.appendChild(btn);
-    });
-  }
+  <script>
+    const STORAGE_KEY = "radio247:favorites";
+    const CUSTOM_KEY = "radio247:custom";
+    const LANG_KEY = "radio247:language";
+    const APP_ARTWORK = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#080808"/>
+  <path d="M64 360 256 80l192 280H64Z" fill="url(#g)"/>
+  <circle cx="256" cy="284" r="72" fill="#080808"/>
+  <circle cx="256" cy="284" r="28" fill="#B8FF00"/>
+  <defs><linearGradient id="g" x1="64" x2="448" y1="80" y2="360"><stop stop-color="#B8FF00"/><stop offset="1" stop-color="#FF2D78"/></linearGradient></defs>
+</svg>`);
 
-  function selectStation(station, btnElement) {
-    if (currentStation && currentStation.id === station.id) {
-      return;
-    }
-
-    document.querySelectorAll(".station-btn").forEach(b => b.classList.remove("active"));
-    if (btnElement) btnElement.classList.add("active");
-
-    if (audio) {
-      audio.pause();
-      audio.src = "";
-    }
-
-    currentStation = station;
-    isPlaying = false;
-    playBtn.disabled = false;
-    playBtn.textContent = "▶";
-
-    statusEl.textContent = "Выбрана станция: " + station.name;
-    trackTitleEl.textContent = station.defaultTrack || "Радио";
-    trackSubEl.textContent = station.name;
-
-    updateMediaSessionMetadata(station);
-
-    audio = new Audio(station.url);
-    audio.volume = volumeEl.value;
-
-    audio.addEventListener("play", () => {
-      isPlaying = true;
-      playBtn.textContent = "⏸";
-[03.07.2026 19:26] Burdik Human: statusEl.textContent = "Воспроизведение: " + station.name;
-      if (mediaSession) {
-        mediaSession.playbackState = "playing";
+    const stations = [
+      {
+        id: "sonicuniverse",
+        title: "Sonic Universe",
+        genre: "Jazz",
+        focus: "Avant-garde jazz, nu jazz, modern improvised music.",
+        source: "SomaFM",
+        site: "https://somafm.com/sonicuniverse/",
+        stream: "https://ice2.somafm.com/sonicuniverse-256-mp3",
+        format: "MP3 256",
+        tags: ["jazz"],
+        color: "#2f6690"
+      },
+      {
+        id: "7soul",
+        title: "Seven Inch Soul",
+        genre: "Soul",
+        focus: "Vintage soul from original 45 RPM vinyl.",
+        source: "SomaFM",
+        site: "https://somafm.com/7soul/",
+        stream: "https://ice2.somafm.com/7soul-128-mp3",
+        format: "MP3 128",
+        tags: ["soul"],
+        color: "#bf7d1d"
+      },
+      {
+        id: "reggae",
+        title: "Heavyweight Reggae",
+        genre: "Reggae",
+        focus: "Reggae, ska, rocksteady, classic and deep cuts.",
+        source: "SomaFM",
+        site: "https://somafm.com/reggae/",
+        stream: "https://ice2.somafm.com/reggae-256-mp3",
+        format: "MP3 256",
+        tags: ["reggae"],
+        color: "#287a59"
+      },
+      {
+        id: "thetrip",
+        title: "The Trip",
+        genre: "House",
+        focus: "Progressive house and trance leaning live channel.",
+        source: "SomaFM",
+        site: "https://somafm.com/thetrip/",
+        stream: "https://ice2.somafm.com/thetrip-128-mp3",
+        format: "MP3 128",
+        tags: ["house"],
+        color: "#8c4e9c"
+      },
+      {
+        id: "beatblender",
+        title: "Beat Blender",
+        genre: "Deep House",
+        focus: "Deep-house and downtempo chill for late nights.",
+        source: "SomaFM",
+        site: "https://somafm.com/beatblender/",
+        stream: "https://ice2.somafm.com/beatblender-128-mp3",
+        format: "MP3 128",
+        tags: ["deep house", "house"],
+        color: "#d84f35"
+      },
+      {
+        id: "ukrainian",
+        title: "Ukrainian",
+        genre: "Ukrainian",
+        focus: "Ukrainian music stream with electronic, jazz, pop and live programming.",
+        source: "Radio Nakypilo",
+        site: "https://radio.nakypilo.ua/",
+        stream: "https://radiostream.nakypilo.ua/full",
+        format: "MP3 320",
+        tags: ["ukrainian"],
+        color: "#00D1FF"
+      },
+      {
+        id: "oldschoolacid",
+        title: "Old School Acid",
+        genre: "Old School Acid",
+        focus: "Acid house, early techno/trance pressure and old-school warehouse energy.",
+        source: "Trancetechnic Radio",
+        site: "http://www.trancetechnic.uk/",
+        stream: "https://s11.ssl-stream.com/ssl/trancete?mp=/stream",
+        format: "MP3 128",
+        tags: ["old school acid", "acid house", "oldschool", "rave", "house"],
+        color: "#B8FF00"
+      },
+      {
+        id: "oldschoolhouse",
+        title: "Old School House",
+        genre: "Old School House",
+        focus: "Classic house cuts and old-school club music.",
+        source: "Hotmix Classic House",
+        site: "https://hotmixradio.com/",
+        stream: "https://streaming.hotmixradio.com/hotmix-classic-house-en-mp3?provider=radiobrowser",
+        format: "MP3 128",
+        tags: ["old school house", "classic house", "house"],
+        color: "#FF2D78"
+      },
+      {
+        id: "subfm",
+        title: "Sub FM",
+        genre: "Bassline / Garage",
+        focus: "Garage, bass, dubstep, jungle, techno and UK underground.",
+        source: "Sub FM",
+        site: "https://sub.fm/",
+        stream: "https://subfm.radioca.st/",
+        format: "MP3 192",
+        tags: ["bassline", "garage", "house", "future garage"],
+        color: "#1d7f85"
+      },
+      {
+        id: "strictlyragga",
+        title: "Strictly Ragga Jungle",
+        genre: "Ragga Jungle",
+        focus: "Ragga jungle and DnB stream from the public radio directory.",
+        source: "Strictly Ragga Jungle",
+        site: "https://onlineradiobox.com/uk/strictlyraggajungle/",
+        stream: "http://s6.citrus3.com:8526/stream",
+        format: "MP3 128",
+        tags: ["ragga jungle", "dnb"],
+        color: "#2d7d3f"
+      },
+      {
+        id: "bassdrive",
+        title: "Bassdrive",
+        genre: "Liquid DnB",
+        focus: "Worldwide drum and bass with a strong liquid and intelligent funk lane.",
+        source: "Bassdrive",
+        site: "https://www.bassdrive.com/",
+        stream: "https://ice.bassdrive.net/stream",
+        format: "MP3 128",
+        tags: ["liquid dnb", "dnb"],
+        color: "#314f8d"
+      },
+      {
+        id: "dnbradio",
+        title: "DnBRadio",
+        genre: "Drum and Bass",
+        focus: "High-bitrate drum and bass channel.",
+        source: "DnBRadio",
+        site: "https://dnbradio.com/",
+        stream: "https://fw.dnbradio.com/dnbradio_main.mp3",
+        format: "MP3 128",
+        tags: ["dnb", "liquid dnb"],
+        color: "#111111"
+      },
+      {
+        id: "fluid",
+        title: "Fluid",
+        genre: "Future Garage",
+        focus: "Instrumental hip-hop, future soul, liquid trap and soft bass music.",
+        source: "SomaFM",
+        site: "https://somafm.com/fluid/",
+        stream: "https://ice2.somafm.com/fluid-128-mp3",
+        format: "MP3 128",
+        tags: ["future garage", "future soul"],
+        color: "#5f6f52"
+      },
+      {
+        id: "groovesalad",
+        title: "Groove Salad",
+        genre: "Downtempo",
+        focus: "Ambient and downtempo beats for continuous background listening.",
+        source: "SomaFM",
+        site: "https://somafm.com/groovesalad/",
+        stream: "https://ice2.somafm.com/groovesalad-256-mp3",
+        format: "MP3 256",
+        tags: ["downtempo", "future garage"],
+        color: "#719b3e"
+      },
+      {
+        id: "dubstep",
+        title: "Dub Step Beyond",
+        genre: "Deep Bass",
+        focus: "Dubstep, dub and deep bass.",
+        source: "SomaFM",
+        site: "https://somafm.com/dubstep/",
+        stream: "https://ice2.somafm.com/dubstep-256-mp3",
+        format: "MP3 256",
+        tags: ["bassline", "deep bass"],
+        color: "#9d3b31"
+      },
+      {
+        id: "cliqhop",
+        title: "cliqhop idm",
+        genre: "Breaks",
+        focus: "IDM, broken beats and glitchy breakbeat-adjacent electronics.",
+        source: "SomaFM",
+        site: "https://somafm.com/cliqhop/",
+        stream: "https://ice2.somafm.com/cliqhop-256-mp3",
+        format: "MP3 256",
+        tags: ["breaks", "idm"],
+        color: "#7c5c2b"
       }
-    });
+    ];
 
-    audio.addEventListener("pause", () => {
-      isPlaying = false;
-      playBtn.textContent = "▶";
-      statusEl.textContent = "Воспроизведение остановлено: " + station.name;
-      if (mediaSession) {
-        mediaSession.playbackState = "paused";
+    const icons = {
+      play: '<path d="M8 5v14l11-7z"></path>',
+      pause: '<path d="M7 5h4v14H7z"></path><path d="M13 5h4v14h-4z"></path>'
+    };
+
+    const audio = document.querySelector("#audio");
+    const stationList = document.querySelector("#stationList");
+    const chips = document.querySelector("#chips");
+    const searchInput = document.querySelector("#searchInput");
+    const nowTitle = document.querySelector("#nowTitle");
+    const nowMeta = document.querySelector("#nowMeta");
+    const focusValue = document.querySelector("#focusValue");
+    const sourceValue = document.querySelector("#sourceValue");
+    const streamValue = document.querySelector("#streamValue");
+    const statusLine = document.querySelector("#statusLine");
+    const playButton = document.querySelector("#playButton");
+    const playIcon = document.querySelector("#playIcon");
+    const prevButton = document.querySelector("#prevButton");
+    const nextButton = document.querySelector("#nextButton");
+    const volumeInput = document.querySelector("#volumeInput");
+    const volumeValue = document.querySelector("#volumeValue");
+    const favoriteButton = document.querySelector("#favoriteButton");
+    const siteLink = document.querySelector("#siteLink");
+    const streamLink = document.querySelector("#streamLink");
+    const languageToggle = document.querySelector("#languageToggle");
+    const trackArt = document.querySelector("#trackArt");
+    const trackArtist = document.querySelector("#trackArtist");
+    const trackTitle = document.querySelector("#trackTitle");
+    const trackUpdated = document.querySelector("#trackUpdated");
+    const refreshTrackButton = document.querySelector("#refreshTrackButton");
+    const playerShell = document.querySelector("#playerShell");
+    const customForm = document.querySelector("#customForm");
+    const customUrl = document.querySelector("#customUrl");
+
+    let favorites = readJson(STORAGE_KEY, []);
+    let customStations = readJson(CUSTOM_KEY, []);
+    let currentLang = readJson(LANG_KEY, "en");
+    let filter = "all";
+    let activeId = stations[0].id;
+    let currentTrack = null;
+    let metadataTimer = null;
+    let metadataRequestId = 0;
+    const artworkCache = new Map();
+
+    function readJson(key, fallback) {
+      try {
+        return JSON.parse(localStorage.getItem(key)) || fallback;
+      } catch {
+        return fallback;
       }
-    });
+    }
 
-    audio.addEventListener("error", (e) => {
-      isPlaying = false;
-      playBtn.textContent = "▶";
-      statusEl.textContent = "Ошибка воспроизведения потока";
-      if (mediaSession) {
-        mediaSession.playbackState = "none";
+    function writeJson(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+
+    const uiText = {
+      en: {
+        subtitle: "A curated set of commercial-free internet radio stations: jazz, soul, reggae, house, bassline, ragga jungle, liquid DnB, future garage, deep house, old school acid, old school house, Ukrainian and breaks.",
+        liveStreams: "Public live streams",
+        searchPlaceholder: "Search by genre or station",
+        genreFilters: "Genre filters",
+        stations: "Stations",
+        player: "Player",
+        playbackControls: "Playback controls",
+        chooseStation: "Choose a station",
+        previousStation: "Previous station",
+        nextStation: "Next station",
+        play: "Play",
+        pause: "Pause",
+        volume: "Volume",
+        playerReady: "Player ready.",
+        nowPlaying: "Now playing",
+        metadataAppears: "Metadata appears after the station starts.",
+        refresh: "Refresh",
+        stationInformation: "Station information",
+        focus: "Focus",
+        tapStation: "Tap any station from the list.",
+        source: "Source",
+        stream: "Stream",
+        addToFavorites: "Add to favorites",
+        inFavorites: "In favorites",
+        stationSite: "Station site",
+        openStream: "Open stream",
+        customStream: "Custom stream",
+        add: "Add",
+        all: "All",
+        favorites: "Favorites",
+        noResults: "Nothing found.",
+        noAds: "No ads",
+        selected: "Selected: {station}.",
+        connecting: "Connecting to {station}...",
+        playing: "Playing: {station}.",
+        playFailed: "The browser could not start the stream. Tap the station again or open the stream directly.",
+        buffering: "Buffering stream...",
+        streamError: "The stream did not respond or is temporarily unavailable. Try another station.",
+        insecureStream: "{station} uses an insecure (http) connection that this page can't play directly. Use \"Open stream\" instead.",
+        customFocus: "Custom stream.",
+        updatedNow: "updated now",
+        updatedAt: "updated {time}",
+        metadataUpdating: "Updating metadata...",
+        metadataNoBrowser: "This stream has no open now-playing API for the browser.",
+        metadataSomaEmpty: "SomaFM did not return the current track.",
+        metadataFailed: "Could not fetch metadata. Try again later.",
+        metadataSearching: "Looking for artist/title and cover art...",
+        coverAlt: "Cover: {artist} - {title}",
+        switchToUk: "Switch language to Ukrainian",
+        switchToEn: "Switch language to English"
+      },
+      uk: {
+        subtitle: "Добірка інтернет-радіостанцій без комерційних рекламних блоків: джаз, соул, регі, хаус, бейслайн, рага-джангл, liquid DnB, future garage, deep house, old school acid, old school house, українська музика і breaks.",
+        liveStreams: "Публічні live-потоки",
+        searchPlaceholder: "Пошук за жанром або станцією",
+        genreFilters: "Фільтри жанрів",
+        stations: "Станції",
+        player: "Плеєр",
+        playbackControls: "Керування відтворенням",
+        chooseStation: "Оберіть станцію",
+        previousStation: "Попередня станція",
+        nextStation: "Наступна станція",
+        play: "Грати",
+        pause: "Пауза",
+        volume: "Гучність",
+        playerReady: "Плеєр готовий.",
+        nowPlaying: "Зараз грає",
+        metadataAppears: "Метадані зʼявляться після запуску станції.",
+        refresh: "Оновити",
+        stationInformation: "Інформація про станцію",
+        focus: "Фокус",
+        tapStation: "Торкніться будь-якої станції зі списку.",
+        source: "Джерело",
+        stream: "Потік",
+        addToFavorites: "Додати в обране",
+        inFavorites: "В обраному",
+        stationSite: "Сайт станції",
+        openStream: "Відкрити потік",
+        customStream: "Власний потік",
+        add: "Додати",
+        all: "Усі",
+        favorites: "Обране",
+        noResults: "Нічого не знайдено.",
+        noAds: "Без реклами",
+        selected: "Обрано: {station}.",
+        connecting: "Підключення до {station}...",
+        playing: "Грає: {station}.",
+        playFailed: "Браузер не зміг запустити потік. Натисніть станцію ще раз або відкрийте потік напряму.",
+        buffering: "Буферизація потоку...",
+        streamError: "Потік не відповів або тимчасово недоступний. Спробуйте іншу станцію.",
+        insecureStream: "{station} використовує незахищене (http) з'єднання, яке ця сторінка не може відтворити напряму. Скористайтесь кнопкою «Відкрити потік».",
+        customFocus: "Власний потік.",
+        updatedNow: "оновлено щойно",
+        updatedAt: "оновлено {time}",
+        metadataUpdating: "Оновлюю metadata...",
+        metadataNoBrowser: "У цього потоку немає відкритого now-playing API для браузера.",
+        metadataSomaEmpty: "SomaFM не повернув поточний трек.",
+        metadataFailed: "Не вдалося отримати metadata. Спробуйте оновити пізніше.",
+        metadataSearching: "Шукаю artist/title і обкладинку...",
+        coverAlt: "Обкладинка: {artist} - {title}",
+        switchToUk: "Перемкнути мову на українську",
+        switchToEn: "Перемкнути мову на англійську"
       }
-      console.error("Audio error:", e);
-    });
+    };
 
-    audio.addEventListener("loadeddata", () => {
-      statusEl.textContent = "Поток готов: " + station.name;
-    });
-  }
+    const stationFocusUk = {
+      sonicuniverse: "Авангардний джаз, nu jazz і сучасна імпровізаційна музика.",
+      "7soul": "Вінтажний соул з оригінальних 45 RPM платівок.",
+      reggae: "Регі, ска, рокстеді, класика і глибокі добірки.",
+      thetrip: "Progressive house і trance-орієнтований live-канал.",
+      beatblender: "Deep house і downtempo chill для пізніх вечорів.",
+      ukrainian: "Український музичний потік з електронікою, джазом, попом і live-програмами.",
+      oldschoolacid: "Acid house, ранній techno/trance тиск і old-school warehouse енергія.",
+      oldschoolhouse: "Classic house і old-school club music.",
+      subfm: "Garage, bass, dubstep, jungle, techno та UK underground.",
+      strictlyragga: "Ragga jungle і DnB-потік з публічного радіокаталогу.",
+      bassdrive: "Worldwide drum and bass із сильним liquid та intelligent funk напрямом.",
+      dnbradio: "Високобітрейтний drum and bass канал.",
+      fluid: "Instrumental hip-hop, future soul, liquid trap і мʼяка bass music.",
+      groovesalad: "Ambient і downtempo beats для безперервного фонового прослуховування.",
+      dubstep: "Dubstep, dub і deep bass.",
+      cliqhop: "IDM, broken beats і glitchy breakbeat-adjacent electronics."
+    };
 
-  playBtn.addEventListener("click", () => {
-    if (!currentStation) {
-      statusEl.textContent = "Выберите станцию";
-      return;
+    function t(key, params = {}) {
+      const template = uiText[currentLang]?.[key] || uiText.en[key] || key;
+      return Object.entries(params).reduce((value, [name, replacement]) => value.replaceAll(`{${name}}`, replacement), template);
     }
-    if (!audio) {
-      const activeBtn = document.querySelector(".station-btn.active");
-      selectStation(currentStation, activeBtn);
+
+    function stationFocus(station) {
+      return currentLang === "uk" ? station.focusUk || stationFocusUk[station.id] || station.focus : station.focus;
     }
 
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play().catch(err => {
-        statusEl.textContent = "Не удалось начать воспроизведение";
-        console.error(err);
-      });
+    function setElementText(selector, value) {
+      const element = document.querySelector(selector);
+      if (element) element.textContent = value;
     }
-  });
 
-  volumeEl.addEventListener("input", () => {
-    if (audio) {
-      audio.volume = volumeEl.value;
+    function applyLanguage() {
+      if (!uiText[currentLang]) currentLang = "en";
+      document.documentElement.lang = currentLang === "uk" ? "uk" : "en";
+      document.title = "RADIO by BURDICK";
+      setElementText(".subtitle", t("subtitle"));
+      setElementText(".source-note span:last-child", t("liveStreams"));
+      searchInput.placeholder = t("searchPlaceholder");
+      chips.setAttribute("aria-label", t("genreFilters"));
+      document.querySelector(".sidebar")?.setAttribute("aria-label", t("stations"));
+      playerShell.setAttribute("aria-label", t("player"));
+      document.querySelector(".transport")?.setAttribute("aria-label", t("playbackControls"));
+      prevButton.title = t("previousStation");
+      prevButton.setAttribute("aria-label", t("previousStation"));
+      nextButton.title = t("nextStation");
+      nextButton.setAttribute("aria-label", t("nextStation"));
+      setElementText(".volume span:first-child", t("volume"));
+      if (!audio.src && statusLine.textContent === uiText.en.playerReady) setStatus(t("playerReady"));
+      setElementText(".track-card .info-label", t("nowPlaying"));
+      refreshTrackButton.querySelector("span").textContent = t("refresh");
+      document.querySelector(".details")?.setAttribute("aria-label", t("stationInformation"));
+      const detailLabels = document.querySelectorAll(".details .info-label");
+      if (detailLabels[0]) detailLabels[0].textContent = t("focus");
+      if (detailLabels[1]) detailLabels[1].textContent = t("source");
+      if (detailLabels[2]) detailLabels[2].textContent = t("stream");
+      setElementText(".custom .info-label", t("customStream"));
+      customForm.querySelector("button span").textContent = t("add");
+      siteLink.querySelector("span").textContent = t("stationSite");
+      streamLink.querySelector("span").textContent = t("openStream");
+      const languageLeft = languageToggle.querySelector(".language-left");
+      const languageRight = languageToggle.querySelector(".language-right");
+      if (languageLeft) languageLeft.textContent = "EN";
+      if (languageRight) languageRight.textContent = "UA";
+      languageToggle.classList.toggle("is-en", currentLang === "en");
+      languageToggle.classList.toggle("is-uk", currentLang === "uk");
+      languageToggle.setAttribute("aria-pressed", currentLang === "uk" ? "true" : "false");
+      languageToggle.title = currentLang === "en" ? t("switchToUk") : t("switchToEn");
+      languageToggle.setAttribute("aria-label", languageToggle.title);
+      updatePlayIcon();
+      renderChips();
+      renderActive();
+      const station = activeStation();
+      if (!audio.src) {
+        setStatus(t("playerReady"));
+      } else if (!audio.paused && !audio.ended) {
+        setStatus(t("playing", { station: station.title }));
+      } else {
+        setStatus(t("selected", { station: station.title }));
+      }
     }
-  });
 
-  function updateMediaSessionMetadata(station) {
-    if (!mediaSession) return;
+    function toggleLanguage() {
+      currentLang = currentLang === "en" ? "uk" : "en";
+      writeJson(LANG_KEY, currentLang);
+      applyLanguage();
+      if (currentTrack) setTrackDisplay(currentTrack, activeStation());
+      refreshNowPlaying(false);
+    }
+    function allStations() {
+      return [...stations, ...customStations];
+    }
 
-    const metadata = new MediaMetadata({
-      title: station.defaultTrack || "Радио",
-      artist: station.name,
-      album: "Online Radio",
-      artwork: [
-        { src: "icon-192.png", sizes: "192x192", type: "image/png" },
-        { src: "icon-512.png", sizes: "512x512", type: "image/png" }
-      ]
-    });
+    function activeStation() {
+      return allStations().find(station => station.id === activeId) || allStations()[0];
+    }
 
-    mediaSession.metadata = metadata;
-  }
+    function genres() {
+      const values = new Set();
+      stations.forEach(station => station.tags.forEach(tag => values.add(tag)));
+      return ["all", "favorites", ...Array.from(values).sort((a, b) => a.localeCompare(b))];
+    }
 
-  function setupMediaSessionHandlers() {
-    if (!mediaSession) return;
+    function genreLabel(value) {
+      const labels = {
+        all: t("all"),
+        favorites: t("favorites"),
+        dnb: "DnB",
+        idm: "IDM"
+      };
+      return labels[value] || value.replace(/\b\w/g, char => char.toUpperCase());
+    }
 
-    mediaSession.setActionHandler("play", () => {
-      if (!isPlaying && audio) {
-        audio.play().catch(err => {
-          console.error("MediaSession play error:", err);
+    function renderChips() {
+      chips.innerHTML = "";
+      genres().forEach(value => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `chip${filter === value ? " active" : ""}`;
+        const label = document.createElement("span");
+        label.textContent = genreLabel(value);
+        button.append(label);
+        button.addEventListener("click", () => {
+          filter = value;
+          renderChips();
+          renderStations();
         });
-      }
-    });
+        chips.append(button);
+      });
+    }
 
-    mediaSession.setActionHandler("pause", () => {
-      if (isPlaying && audio) {
+    function filteredStations() {
+      const query = searchInput.value.trim().toLowerCase();
+      return allStations().filter(station => {
+        const haystack = [
+          station.title,
+          station.genre,
+          station.focus,
+          station.source,
+          station.format,
+          ...station.tags
+        ].join(" ").toLowerCase();
+        const matchesQuery = !query || haystack.includes(query);
+        const matchesFilter =
+          filter === "all" ||
+          (filter === "favorites" && favorites.includes(station.id)) ||
+          station.tags.includes(filter);
+        return matchesQuery && matchesFilter;
+      });
+    }
+
+    function renderStations() {
+      const list = filteredStations();
+      stationList.innerHTML = "";
+
+      if (!list.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = t("noResults");
+        stationList.append(empty);
+        return;
+      }
+
+      list.forEach(station => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = `station-card${station.id === activeId ? " active" : ""}`;
+        card.style.setProperty("--tone", station.color);
+        card.addEventListener("click", () => selectStation(station.id, true));
+
+        const stripe = document.createElement("span");
+        stripe.className = "stripe";
+        stripe.setAttribute("aria-hidden", "true");
+
+        const main = document.createElement("span");
+        main.className = "station-main";
+
+        const titleRow = document.createElement("span");
+        titleRow.className = "station-title-row";
+
+        const title = document.createElement("span");
+        title.className = "station-title";
+        title.textContent = station.title;
+
+        titleRow.append(title);
+        if (station.source === "SomaFM") {
+          const badge = document.createElement("span");
+          badge.className = "badge";
+          badge.textContent = t("noAds");
+          titleRow.append(badge);
+        }
+
+        const genre = document.createElement("span");
+        genre.className = "station-genre";
+        genre.textContent = `${station.genre} · ${station.format}`;
+
+        main.append(titleRow, genre);
+
+        const playCue = document.createElement("span");
+        playCue.className = "icon-button station-play";
+        playCue.setAttribute("aria-hidden", "true");
+        playCue.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>';
+
+        card.append(stripe, main, playCue);
+        stationList.append(card);
+      });
+    }
+
+    function safeCoverColor(color) {
+      return /^#[0-9a-f]{6}$/i.test(color || "") ? color : "#B8FF00";
+    }
+
+    function stationArtwork(station = activeStation()) {
+      const color = safeCoverColor(station?.color);
+      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#080808"/>
+  <circle cx="148" cy="144" r="168" fill="${color}" opacity="0.88"/>
+  <circle cx="372" cy="368" r="174" fill="#FF2D78" opacity="0.86"/>
+  <circle cx="256" cy="256" r="126" fill="#080808"/>
+  <circle cx="256" cy="256" r="48" fill="#B8FF00"/>
+</svg>`);
+    }
+
+    function formatTrackTime(timestamp) {
+      if (!timestamp) return t("updatedNow");
+      const numeric = Number(timestamp);
+      const date = Number.isFinite(numeric) ? new Date(numeric * 1000) : new Date(timestamp);
+      if (Number.isNaN(date.getTime())) return t("updatedNow");
+      return t("updatedAt", { time: date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) });
+    }
+
+    function splitTrackText(text = "") {
+      const clean = String(text).trim();
+      const separator = [" - ", " – ", " — "].find(item => clean.includes(item));
+      if (!separator) return { artist: "Live radio", title: clean || activeStation().title };
+      const [artist, ...titleParts] = clean.split(separator);
+      return { artist: artist.trim() || "Live radio", title: titleParts.join(separator).trim() || clean };
+    }
+
+    async function fetchJsonWithTimeout(url, timeout = 7000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetch(url, { cache: "no-store", signal: controller.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function fetchSomaNowPlaying(station) {
+      const data = await fetchJsonWithTimeout(`https://api.somafm.com/songs/${encodeURIComponent(station.id)}.json`);
+      const song = data?.songs?.[0];
+      if (!song) return null;
+      const fallback = splitTrackText(song.title);
+      return {
+        artist: song.artist || fallback.artist,
+        title: song.title || fallback.title,
+        album: song.album || station.source,
+        artwork: song.albumArt || "",
+        updatedAt: song.date,
+        provider: "SomaFM"
+      };
+    }
+
+    async function lookupArtwork(track) {
+      const query = [track.artist, track.title].filter(Boolean).join(" ").trim();
+      if (!query || track.artist === "Live radio") return "";
+      const key = query.toLowerCase();
+      if (artworkCache.has(key)) return artworkCache.get(key);
+      try {
+        const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=1`;
+        const data = await fetchJsonWithTimeout(url, 6000);
+        const artwork = data?.results?.[0]?.artworkUrl100 || "";
+        const highRes = artwork.replace(/100x100bb\.(jpg|png|webp)$/i, "600x600bb.$1");
+        artworkCache.set(key, highRes);
+        return highRes;
+      } catch {
+        artworkCache.set(key, "");
+        return "";
+      }
+    }
+
+    function setTrackDisplay(track, station = activeStation()) {
+      const artwork = track.artwork || stationArtwork(station);
+      currentTrack = { ...track, artwork };
+      trackArtist.textContent = track.artist || station.source || "Live radio";
+      trackTitle.textContent = track.title || station.title;
+      trackUpdated.textContent = track.note || `${track.provider || station.source} · ${formatTrackTime(track.updatedAt)}`;
+      trackArt.src = artwork;
+      trackArt.alt = t("coverAlt", { artist: track.artist || station.source, title: track.title || station.title });
+      updateMediaSession(station, currentTrack);
+    }
+
+    function setTrackFallback(station = activeStation(), note = t("metadataNoBrowser")) {
+      setTrackDisplay({
+        artist: station.source || "Live radio",
+        title: station.title,
+        album: station.genre,
+        artwork: stationArtwork(station),
+        note
+      }, station);
+    }
+
+    async function refreshNowPlaying(manual = false) {
+      const station = activeStation();
+      const requestId = ++metadataRequestId;
+      if (manual) {
+        trackUpdated.textContent = t("metadataUpdating");
+      }
+      try {
+        let track = null;
+        if (station.source === "SomaFM") {
+          track = await fetchSomaNowPlaying(station);
+        }
+        if (requestId !== metadataRequestId) return;
+        if (!track) {
+          setTrackFallback(station, station.source === "SomaFM" ? t("metadataSomaEmpty") : t("metadataNoBrowser"));
+          return;
+        }
+        if (!track.artwork) {
+          track.artwork = await lookupArtwork(track);
+        }
+        if (requestId !== metadataRequestId) return;
+        setTrackDisplay(track, station);
+      } catch {
+        if (requestId === metadataRequestId) {
+          setTrackFallback(station, t("metadataFailed"));
+        }
+      }
+    }
+
+    function scheduleMetadataRefresh() {
+      clearInterval(metadataTimer);
+      setTrackFallback(activeStation(), t("metadataSearching"));
+      refreshNowPlaying(false);
+      metadataTimer = setInterval(() => refreshNowPlaying(false), 45000);
+    }
+    function updateMediaPlaybackState(isPlaying) {
+      if (!("mediaSession" in navigator)) return;
+      navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+    }
+
+    function updateMediaSession(station = activeStation(), track = currentTrack) {
+      if (!("mediaSession" in navigator) || !station) return;
+      const artwork = track?.artwork || stationArtwork(station) || APP_ARTWORK;
+      const metadata = {
+        title: track?.title || station.title,
+        artist: track?.artist || station.genre,
+        album: track?.album || `Radio 24/7 · ${station.source}`,
+        artwork: [
+          { src: artwork, sizes: "512x512", type: artwork.includes("itunes") ? "image/jpeg" : "image/svg+xml" }
+        ]
+      };
+      navigator.mediaSession.metadata = typeof MediaMetadata === "function" ? new MediaMetadata(metadata) : metadata;
+      updateMediaPlaybackState(!audio.paused && !audio.ended);
+    }
+
+    function setMediaAction(action, handler) {
+      if (!("mediaSession" in navigator)) return;
+      try {
+        navigator.mediaSession.setActionHandler(action, handler);
+      } catch {
+        /* Some mobile browsers expose Media Session but not every action. */
+      }
+    }
+
+    function setupMediaSession() {
+      setMediaAction("play", () => playCurrent());
+      setMediaAction("pause", () => audio.pause());
+      setMediaAction("previoustrack", () => move(-1));
+      setMediaAction("nexttrack", () => move(1));
+      setMediaAction("stop", () => audio.pause());
+    }
+    function renderActive() {
+      const station = activeStation();
+      const isFavorite = favorites.includes(station.id);
+      nowTitle.textContent = station.title;
+      nowMeta.innerHTML = "";
+      [station.genre, station.source, station.format].forEach(item => {
+        const pill = document.createElement("span");
+        pill.className = "meta-pill";
+        pill.textContent = item;
+        nowMeta.append(pill);
+      });
+      focusValue.textContent = stationFocus(station);
+      sourceValue.textContent = station.source;
+      streamValue.textContent = station.stream;
+      siteLink.href = station.site || station.stream;
+      streamLink.href = station.stream;
+      favoriteButton.classList.toggle("active", isFavorite);
+      favoriteButton.querySelector("span").textContent = isFavorite ? t("inFavorites") : t("addToFavorites");
+      updateMediaSession(station, currentTrack);
+      renderStations();
+    }
+
+    function setStatus(message, isError = false) {
+      statusLine.textContent = message;
+      statusLine.classList.toggle("error", isError);
+    }
+
+    function streamIsLoaded(station) {
+      return audio.getAttribute("src") === station.stream;
+    }
+
+    function isInsecureStream(station) {
+      // A page loaded over https cannot play a plain http:// stream (mixed content).
+      // This is silently blocked by mobile browsers, so we detect and explain it instead.
+      return location.protocol === "https:" && /^http:\/\//i.test(station.stream || "");
+    }
+
+    function loadStation(station) {
+      audio.pause();
+      audio.setAttribute("src", station.stream);
+      // Explicit .load() is required on iOS Safari / some Android browsers whenever the
+      // src of an <audio> element changes — without it, switching stations can silently
+      // keep buffering the previous stream and play() never actually starts audio.
+      audio.load();
+    }
+
+    function startPlayback(station = activeStation()) {
+      if (isInsecureStream(station)) {
+        setStatus(t("insecureStream", { station: station.title }), true);
+        return;
+      }
+      if (!streamIsLoaded(station)) {
+        loadStation(station);
+      }
+      setStatus(t("connecting", { station: station.title }));
+      const playAttempt = audio.play();
+      if (playAttempt && typeof playAttempt.then === "function") {
+        playAttempt
+          .then(() => setStatus(t("playing", { station: station.title })))
+          .catch(err => {
+            console.error("[BURDIK RADIO] play() rejected:", station.title, station.stream, err);
+            setStatus(t("playFailed"), true);
+          });
+      } else {
+        setStatus(t("playing", { station: station.title }));
+      }
+    }
+
+    function selectStation(id, autoplay = false) {
+      const station = allStations().find(item => item.id === id);
+      if (!station) return;
+      const switchingStream = !streamIsLoaded(station);
+      activeId = id;
+      if (switchingStream) {
+        loadStation(station);
+      }
+      if (autoplay) {
+        startPlayback(station);
+      } else {
+        setStatus(t("selected", { station: station.title }));
+      }
+      renderActive();
+      scheduleMetadataRefresh();
+    }
+
+    function playCurrent() {
+      startPlayback(activeStation());
+    }
+
+    function togglePlayback() {
+      if (audio.paused) {
+        playCurrent();
+      } else {
         audio.pause();
       }
+    }
+
+    function move(delta) {
+      const list = filteredStations();
+      if (!list.length) return;
+      const currentIndex = Math.max(0, list.findIndex(station => station.id === activeId));
+      const nextIndex = (currentIndex + delta + list.length) % list.length;
+      selectStation(list[nextIndex].id, true);
+    }
+
+    function toggleFavorite() {
+      const station = activeStation();
+      if (favorites.includes(station.id)) {
+        favorites = favorites.filter(id => id !== station.id);
+      } else {
+        favorites = [...favorites, station.id];
+      }
+      writeJson(STORAGE_KEY, favorites);
+      renderActive();
+      setupMediaSession();
+    renderChips();
+    }
+
+    function addCustomStation(url) {
+      const cleanUrl = url.trim();
+      if (!cleanUrl) return;
+      const id = `custom-${Date.now()}`;
+      customStations = [
+        ...customStations,
+        {
+          id,
+          title: "Custom Stream",
+          genre: "Custom",
+          focus: t("customFocus"),
+          source: "Custom",
+          site: cleanUrl,
+          stream: cleanUrl,
+          format: "Audio",
+          tags: ["custom"],
+          color: "#59544f"
+        }
+      ];
+      writeJson(CUSTOM_KEY, customStations);
+      customUrl.value = "";
+      selectStation(id, true);
+    }
+
+    function updatePlayIcon() {
+      const isPlaying = !audio.paused && !audio.ended;
+      playIcon.innerHTML = isPlaying ? icons.pause : icons.play;
+      playButton.title = isPlaying ? t("pause") : t("play");
+      playButton.setAttribute("aria-label", isPlaying ? t("pause") : t("play"));
+      playerShell.classList.toggle("playing", isPlaying);
+      updateMediaPlaybackState(isPlaying);
+    }
+
+    searchInput.addEventListener("input", renderStations);
+    playButton.addEventListener("click", togglePlayback);
+    prevButton.addEventListener("click", () => move(-1));
+    nextButton.addEventListener("click", () => move(1));
+    favoriteButton.addEventListener("click", toggleFavorite);
+    languageToggle.addEventListener("click", toggleLanguage);
+    refreshTrackButton.addEventListener("click", () => refreshNowPlaying(true));
+    customForm.addEventListener("submit", event => {
+      event.preventDefault();
+      addCustomStation(customUrl.value);
     });
 
-    mediaSession.setActionHandler("previoustrack", () => {
-      // Можно реализовать переключение на предыдущую станцию
+    volumeInput.addEventListener("input", () => {
+      audio.volume = Number(volumeInput.value);
+      volumeValue.textContent = `${Math.round(audio.volume * 100)}%`;
     });
 
-    mediaSession.setActionHandler("nexttrack", () => {
-      // Можно реализовать переключение на следующую станцию
+    audio.addEventListener("play", updatePlayIcon);
+    audio.addEventListener("pause", updatePlayIcon);
+    audio.addEventListener("ended", updatePlayIcon);
+    audio.addEventListener("waiting", () => setStatus(t("buffering")));
+    audio.addEventListener("playing", () => {
+      setStatus(t("playing", { station: activeStation().title }));
+      refreshNowPlaying(false);
+      updateMediaSession(activeStation(), currentTrack);
+    });
+    audio.addEventListener("error", () => {
+      const mediaError = audio.error;
+      const errorNames = { 1: "MEDIA_ERR_ABORTED", 2: "MEDIA_ERR_NETWORK", 3: "MEDIA_ERR_DECODE", 4: "MEDIA_ERR_SRC_NOT_SUPPORTED" };
+      console.error(
+        "[BURDIK RADIO] <audio> error:",
+        mediaError ? (errorNames[mediaError.code] || mediaError.code) : "unknown",
+        "station:", activeStation()?.title,
+        "src:", audio.currentSrc || audio.getAttribute("src")
+      );
+      setStatus(t("streamError"), true);
+      updatePlayIcon();
     });
 
-    mediaSession.setActionHandler("stop", () => {
-      if (audio) {
-        audio.pause();
-        audio.src = "";
-        isPlaying = false;
-        playBtn.textContent = "▶";
-        mediaSession.playbackState = "none";
+    document.addEventListener("keydown", event => {
+      const tag = document.activeElement.tagName.toLowerCase();
+      if (tag === "input") return;
+      if (event.code === "Space") {
+        event.preventDefault();
+        togglePlayback();
+      }
+      if (event.code === "ArrowLeft") move(-1);
+      if (event.code === "ArrowRight") move(1);
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      updateMediaSession(activeStation(), currentTrack);
+      if (document.hidden && !audio.paused && !audio.ended) {
+        updateMediaPlaybackState(true);
       }
     });
-  }
 
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js").then(() => {
-      console.log("Service Worker зарегистрирован");
-    }).catch(err => {
-      console.error("Ошибка регистрации SW:", err);
+    audio.volume = Number(volumeInput.value);
+    setupMediaSession();
+    applyLanguage();
+    selectStation(activeId, false);
+    updatePlayIcon();
+  </script>
+  <!-- self-contained: no external JS -->
+
+  <script>
+  /* ================================================
+     CREATIVE ENHANCEMENTS — BURDIK RADIO 24/7
+     ================================================ */
+
+  // ── 1. CUSTOM CURSOR WITH LIME TRAIL ─────────────
+  (function initCursor() {
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
+
+    document.body.classList.add('has-cursor');
+
+    const TRAIL = 20;
+    let mx = -300, my = -300;
+
+    const dot = document.createElement('div');
+    dot.id = 'cursor-dot';
+    document.body.appendChild(dot);
+
+    const trailEls = Array.from({ length: TRAIL }, (_, i) => {
+      const el = document.createElement('div');
+      el.className = 'cursor-trail-el';
+      const p = 1 - i / TRAIL;           // 1 at head, 0 at tail
+      const sz = Math.max(1, Math.round(p * 8));
+      el.style.cssText =
+        `width:${sz}px;height:${sz}px;` +
+        `background:#B8FF00;` +
+        `opacity:${(p * 0.78).toFixed(2)};` +
+        `box-shadow:0 0 ${Math.round(p * 10)}px rgba(184,255,0,0.65);`;
+      document.body.appendChild(el);
+      return { el, x: -300, y: -300 };
     });
-  }
 
-  initStations();
-  setupMediaSessionHandlers();
-</script>
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px';
+      dot.style.top  = my + 'px';
+    });
+
+    const lerp = (a, b, t) => a + (b - a) * t;
+
+    let rafId;
+    function tick() {
+      let px = mx, py = my;
+      for (let i = 0; i < TRAIL; i++) {
+        const td = trailEls[i];
+        const spd = Math.max(0.07, 0.30 - i * 0.011);
+        td.x = lerp(td.x, px, spd);
+        td.y = lerp(td.y, py, spd);
+        td.el.style.left = td.x + 'px';
+        td.el.style.top  = td.y + 'px';
+        px = td.x; py = td.y;
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+    tick();
+
+    // Scale on interactive elements
+    document.addEventListener('mouseover', e => {
+      if (e.target.closest('button,a,input,[role=button],.chip,.station-card')) {
+        dot.classList.add('over-interactive');
+      }
+    });
+    document.addEventListener('mouseout', e => {
+      if (e.target.closest('button,a,input,[role=button],.chip,.station-card')) {
+        dot.classList.remove('over-interactive');
+      }
+    });
+  })();
+
+  // ── 2. FLOATING BACKGROUND PARTICLES ─────────────
+  (function initParticles() {
+    const container = document.createElement('div');
+    container.id = 'bg-particles';
+    document.body.insertBefore(container, document.body.firstChild);
+
+    const COLORS = ['#B8FF00', '#B8FF00', '#B8FF00', '#FF2D78'];
+    const COUNT  = 28;
+
+    for (let i = 0; i < COUNT; i++) {
+      const p   = document.createElement('div');
+      p.className = 'particle';
+      const sz  = 1 + Math.random() * 3;
+      const dur = 10 + Math.random() * 18;
+      const del = -(Math.random() * dur);
+      const lft = Math.random() * 100;
+      const col = COLORS[Math.floor(Math.random() * COLORS.length)];
+      const opc = 0.06 + Math.random() * 0.18;
+
+      p.style.cssText =
+        `left:${lft}%;` +
+        `width:${sz}px;height:${sz}px;` +
+        `background:${col};` +
+        `opacity:${opc.toFixed(2)};` +
+        `animation-duration:${dur}s;` +
+        `animation-delay:${del.toFixed(1)}s;` +
+        `box-shadow:0 0 ${Math.round(sz * 4)}px ${col};`;
+      container.appendChild(p);
+    }
+  })();
+
+  // ── 3. STATION CARD STAGGER ANIMATION ────────────
+  (function initCardAnimations() {
+    const list = document.getElementById('stationList');
+    if (!list) return;
+
+    const obs = new MutationObserver(() => {
+      list.querySelectorAll('.station-card:not(.animate-in)').forEach((card, i) => {
+        card.classList.add('animate-in');
+        card.style.animationDelay = (i * 0.045) + 's';
+      });
+    });
+    obs.observe(list, { childList: true });
+  })();
+
+  // ── 4. HERO ENTRANCE — characters drop in ────────
+  (function initHeroEntrance() {
+    // Stagger the main title letters on first load
+    const title = document.querySelector('.hero-main-title');
+    const s247  = document.querySelector('.hero-main-247');
+    if (!title || !s247) return;
+
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `
+      @keyframes letterDrop {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .hero-main-title.split span {
+        display: inline-block;
+        animation: letterDrop 0.5s ease backwards;
+      }
+      @keyframes numFall {
+        from { opacity: 0; transform: scale(1.3) translateY(-30px); filter: blur(8px); }
+        to   { opacity: 1; transform: scale(1)   translateY(0);     filter: blur(0);   }
+      }
+      .hero-main-247.anim {
+        animation: numFall 0.8s cubic-bezier(0.2,0.8,0.2,1) 0.3s backwards;
+      }
+    `;
+    document.head.appendChild(styleEl);
+
+    // Split text into spans
+    const text = title.textContent;
+    title.classList.add('split');
+    title.innerHTML = text.split('').map((ch, i) =>
+      ch === ' '
+        ? ' '
+        : `<span style="animation-delay:${(i * 0.04).toFixed(2)}s">${ch}</span>`
+    ).join('');
+
+    s247.classList.add('anim');
+  })();
+  </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
